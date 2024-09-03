@@ -2,13 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 const port = process.env.PORT || 5001;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
 
 // Routes
 app.get('/', (req, res) => {
@@ -25,3 +24,14 @@ mongoose.connect(process.env.MONGO_URI, {
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+//to get json data
+// support parsing of application/json type post data
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+
+app.use('/api/users', require('./routes/users'));
