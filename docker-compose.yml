@@ -18,9 +18,8 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - MONGO_URI=mongodb+srv://intern:QOkUN3sgS8kjbZcj@multitubesproductionclu.9qgtt.mongodb.net/?retryWrites=true&w=majority&appName=MultitubesProductionCluster
+    env_file:
+      - variables.env
     depends_on:
       - mongo
 
