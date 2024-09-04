@@ -71,13 +71,21 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.get("/logout", auth, (req, res) => {
-    User.findOneAndUpdate({ _id: req.user._id }, { token: "", tokenExp: "" }, (err, doc) => {
-        if (err) return res.json({ success: false, err });
-        return res.status(200).send({
-            success: true
-        });
-    });
+router.get("/logout", auth, async (req, res) => {
+    try {
+        const result = await User.findOneAndUpdate(
+            { _id: req.user._id }, 
+            { token: "", tokenExp: "" }
+        );
+
+        if (!result) {
+            return res.json({ success: false, message: 'User not found' });
+        }
+
+        return res.status(200).send({ success: true });
+    } catch (err) {
+        return res.json({ success: false, err });
+    }
 });
 
 module.exports = router;

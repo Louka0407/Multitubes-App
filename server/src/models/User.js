@@ -6,72 +6,71 @@ const moment = require("moment");
 
 const userSchema = mongoose.Schema({
     name: {
-        type:String,
-        maxlength:50
+        type: String,
+        maxlength: 50
     },
     email: {
-        type:String,
-        trim:true,
-        unique: 1 
+        type: String,
+        trim: true,
+        unique: 1
     },
     password: {
         type: String,
-        minglength: 5
+        minlength: 5
     },
     lastname: {
-        type:String,
+        type: String,
         maxlength: 50
     },
-    role : {
-        type:Number,
-        default: 0 
+    role: {
+        type: Number,
+        default: 0
     },
-    token : {
-        type: String,
+    token: {
+        type: String
     },
-    tokenExp :{
+    tokenExp: {
         type: Number
-    }
-})
-
-userSchema.pre('save', function( next ) {
-    var user = this;
-    
-    if(user.isModified('password')){    
-        bcrypt.genSalt(saltRounds, function(err, salt){
-            if(err) return next(err);
-    
-            bcrypt.hash(user.password, salt, function(err, hash){
-                if(err) return next(err);
-                user.password = hash 
-                next()
-            })
-        })
-    } else {
-        next()
     }
 });
 
-userSchema.methods.comparePassword = function (plainPassword) {
+userSchema.pre('save', function(next) {
+    var user = this;
+    
+    if (user.isModified('password')) {
+        bcrypt.genSalt(saltRounds, function(err, salt) {
+            if (err) return next(err);
+
+            bcrypt.hash(user.password, salt, function(err, hash) {
+                if (err) return next(err);
+                user.password = hash;
+                next();
+            });
+        });
+    } else {
+        next();
+    }
+});
+
+userSchema.methods.comparePassword = function(plainPassword) {
     return bcrypt.compare(plainPassword, this.password);
 };
 
-
 userSchema.methods.generateToken = async function() {
     const user = this;
-    const token = jwt.sign(user._id.toHexString(), 'secret');
+    const token = jwt.sign({ _id: user._id }, 'secret');
     const oneHour = moment().add(1, 'hour').valueOf();
 
     user.tokenExp = oneHour;
     user.token = token;
     
-    await user.save(); // Utilisation de la Promesse
+    await user.save();
 
     return user;
 };
 
-userSchema.statics.findByToken = async function (token) {
-    const User = this;  // Référence au modèle User
+userSchema.statics.findByToken = async function(token) {
+    const user = this;
 
     try {
         // Décoder le token
@@ -83,15 +82,13 @@ userSchema.statics.findByToken = async function (token) {
         });
 
         // Trouver l'utilisateur correspondant
-        const user = await User.findOne({ "_id": decoded, "token": token });
-        return user;
+        const foundUser = await user.findOne({ "_id": decoded._id, "token": token });
+        return foundUser;
     } catch (err) {
         throw err;
     }
 };
 
-
-
 const User = mongoose.model('User', userSchema);
 
-module.exports = { User }
+module.exports = { User };
