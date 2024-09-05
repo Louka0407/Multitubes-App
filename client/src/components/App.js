@@ -10,7 +10,7 @@ import LandingPage from './views/LandingPage/LandingPage';
 function App() {
 
     const AuthLandingPage = withAuthenticationCheck(LandingPage, null);
-    const AuthLoginPage = withAuthenticationCheck(LoginPage, false);
+    const AuthLoginPage = withAuthenticationCheck(LoginPage, null);
     
     return(
         <Suspense fallback={(<div>Loading...</div>)}>
