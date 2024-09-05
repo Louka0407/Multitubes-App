@@ -3,6 +3,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 console.log("Proxy is being set up");
 
 module.exports = function (app) {
+
     app.use(
         '/api',
         createProxyMiddleware({

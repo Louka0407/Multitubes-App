@@ -2,38 +2,43 @@
 import React, { useEffect } from 'react';
 import { auth } from '../_actions/user_actions';
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from 'react-router-dom';
 
 const withAuthenticationCheck = (SpecificComponent, option, adminRoute = null) => {
-    // Cette fonction retourne un composant fonctionnel
-    return function AuthenticationCheck(props) {
-        const user = useSelector(state => state.user);
+    function AuthenticationCheck(props) {
+
+        let user = useSelector(state => state.user);
         const dispatch = useDispatch();
-        const navigate = useNavigate();
 
         useEffect(() => {
-            const checkAuthentication = async () => {
-                const response = await dispatch(auth());
-
+            //To know my current status, send Auth request 
+            dispatch(auth()).then(response => {
+                //Not Loggined in Status 
                 if (!response.payload.isAuth) {
                     if (option) {
-                        navigate('/login');
+                        props.history.push('/login')
                     }
+                    //Loggined in Status 
                 } else {
+                    //supposed to be Admin page, but not admin person wants to go inside
                     if (adminRoute && !response.payload.isAdmin) {
-                        navigate('/');
-                    } else if (option === false) {
-                        navigate('/');
+                        props.history.push('/')
+                    }
+                    //Logged in Status, but Try to go into log in page 
+                    else {
+                        if (option === false) {
+                            props.history.push('/')
+                        }
                     }
                 }
-            };
+            })
 
-            checkAuthentication();
-        }, [dispatch, navigate, option, adminRoute]);
+        }, [])
 
-        // Si l'utilisateur est authentifié et satisfait les conditions, le composant est rendu
-        return <SpecificComponent {...props} user={user} />;
-    };
-};
+        return (
+            <SpecificComponent {...props} user={user} />
+        )
+    }
+    return AuthenticationCheck
+}
 
 export default withAuthenticationCheck;

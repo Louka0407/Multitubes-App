@@ -18,7 +18,7 @@ let auth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return err;
   }
 };
 
