@@ -8,17 +8,26 @@ import logo from '../../../images/Multitubes Logo.png';
 import illustration from '../../../images/login-illustrator.svg';
 
 function LoginPage() {
+
+  // --------------------------------- Elements dynamiques ---------------------------------- // 
+
+
   const [formErrorMessage, setFormErrorMessage] = useState('');
   const [loading, setLoading] = useState(false); // Ajout de l'état de chargement
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate(); 
 
-  // Validation Schema avec Yup
+
+
+  // --------------------------------- Corps ---------------------------------- // 
+
+  // Validation attributs avec Yup
   const validationSchema = Yup.object({
     email: Yup.string().email('Email invalide').required('Email requis'),
     password: Yup.string().required('Mot de passe requis'),
   });
 
   return (
+
     <div className="login-container">
       <div className="login-form">
         <div className="center">
