@@ -1,15 +1,17 @@
+/* Conteneur général */
 .container {
-  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
   text-align: left;
   position: relative;
+  max-width: 1200px; /* Largeur maximale pour les grands écrans */
 }
 
+/* En-tête */
 .header {
   display: flex;
-  justify-content: flex-end;
-  padding: 20px;
+  justify-content: flex-end; 
+  padding: 10px 20px;
 }
 
 .logo {
@@ -17,65 +19,47 @@
   height: auto;
 }
 
-.stepTitle {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #999;
+.navBar {
+  margin-bottom: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 900px; 
 }
 
-.stepper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.step {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #e0e0e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-weight: bold;
-}
-
-.active {
-  background-color: #f6a623;
-}
-
+/* Formulaire */
 .formContainer {
   margin-bottom: 50px;
+  padding-left: 20px;
+  max-width: 100%; 
 }
 
 .formRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin-bottom: 15px;
+  flex-wrap: wrap; 
 }
 
 .formRow label {
-  flex: 1;
-  margin-right: 10px;
+  width: 150px;
   font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .formRow input,
 .formRow select {
-  flex: 2;
+  flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  max-width: 30%; 
+  min-width: 200px; 
 }
 
 .addButtonContainer {
   display: flex;
-  justify-content: center;
   margin-top: 20px;
+  margin-left: 25%;
 }
 
 .addButton {
@@ -89,6 +73,7 @@
   cursor: pointer;
 }
 
+/* Bouton "Étape suivante" */
 .nextStep {
   background-color: #f6a623;
   border: none;
@@ -102,35 +87,86 @@
   bottom: 20px;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .formRow {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.stepper {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  margin-bottom: 30px;
+  max-width: 100%;
+}
 
-  .formRow label,
-  .formRow input,
-  .formRow select {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 10px;
+.step {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  width: 50px; 
+  height: 5px;
+  background-color: #e0e0e0;
+  top: 50%;
+  left: 100%; 
+  transform: translateY(-50%);
+}
+
+.active {
+  background-color: #f6a623;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    justify-content: center; 
   }
 
   .stepper {
-    flex-wrap: wrap;
+    flex-wrap: wrap; 
+    justify-content: center; 
   }
 
-  .step {
-    margin-bottom: 10px;
+  .formRow {
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 10px; 
+  }
+
+  .formRow label {
+    width: auto; 
+    margin-bottom: 5px; 
+  }
+
+  .formRow input,
+  .formRow select {
+    width: 100%; 
+    max-width: none;
+  }
+
+  .addButtonContainer {
+    justify-content: center; 
   }
 
   .nextStep {
-    width: 100%;
-    bottom: 10px;
-    left: 0;
-    right: 0;
-    text-align: center;
     position: static;
+    margin-top: 20px;
+    width: 100%; 
+  }
+
+  .formRow2 {
+    flex-direction: column; 
   }
 }

@@ -10,6 +10,7 @@
         "dev": "concurrently \"npm run backend\" \"npm run frontend\""
     },
     "dependencies": {
+        "antd": "^5.20.5",
         "concurrently": "^8.2.2",
         "formik": "^2.4.6",
         "yup": "^1.4.0"
