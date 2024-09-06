@@ -1,0 +1,136 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: left;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+}
+
+.stepTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #999;
+}
+
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.step {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+}
+
+.active {
+  background-color: #f6a623;
+}
+
+.formContainer {
+  margin-bottom: 50px;
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.formRow label {
+  flex: 1;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.formRow input,
+.formRow select {
+  flex: 2;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.addButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.addButton {
+  background-color: #f6a623;
+  border: none;
+  color: white;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.nextStep {
+  background-color: #f6a623;
+  border: none;
+  color: white;
+  font-size: 16px;
+  padding: 15px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .formRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .formRow label,
+  .formRow input,
+  .formRow select {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .stepper {
+    flex-wrap: wrap;
+  }
+
+  .step {
+    margin-bottom: 10px;
+  }
+
+  .nextStep {
+    width: 100%;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    position: static;
+  }
+}
