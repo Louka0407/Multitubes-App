@@ -27,15 +27,26 @@ export function loginUser(dataToSubmit){
     }
 }
 
-export function auth(){
-    const request = axios.get(`${USER_SERVER}/auth`)
-    .then(response => response.data);
+export function auth() {
+    return async (dispatch) => {
+        try {
+            const response = await axios.get(`${USER_SERVER}/auth`);
+            const data = response.data;
 
-    return {
-        type: AUTH_USER,
-        payload: request
-    }
+            dispatch({
+                type: AUTH_USER,
+                payload: data
+            });
+
+            return { payload: data };
+        } catch (error) {
+            console.error('Error during authentication:', error);
+            return { payload: null };
+        }
+    };
 }
+
+
 
 export function logoutUser(){
     const request = axios.get(`${USER_SERVER}/logout`)
