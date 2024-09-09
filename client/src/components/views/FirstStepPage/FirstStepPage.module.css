@@ -7,18 +7,6 @@
   max-width: 1200px; /* Largeur maximale pour les grands écrans */
 }
 
-/* En-tête */
-.header {
-  display: flex;
-  justify-content: flex-end; 
-  padding: 10px 20px;
-}
-
-.logo {
-  width: 80px;
-  height: auto;
-}
-
 .navBar {
   margin-bottom: 50px;
   margin-left: auto;
@@ -73,6 +61,12 @@
   cursor: pointer;
 }
 
+.addButton:hover{
+  background-color: #e5941e;
+  transform: scale(1.05); 
+  
+}
+
 /* Bouton "Étape suivante" */
 .nextStep {
   background-color: #f6a623;
@@ -85,6 +79,12 @@
   position: absolute;
   right: 20px;
   bottom: 20px;
+}
+
+.nextStep:hover {
+  background-color: #e5941e; 
+  transform: scale(1.05); 
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
 
 .stepper {
@@ -129,6 +129,12 @@
   margin-top: 5px;
 }
 
+hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
+
 @media (max-width: 768px) {
   .header {
     justify-content: center; 
@@ -168,5 +174,13 @@
 
   .formRow2 {
     flex-direction: column; 
+  }
+
+  .addButtonContainer {
+    margin-left: 0;
+  }
+
+  .navBar{
+    display: none;
   }
 }

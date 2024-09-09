@@ -1,44 +1,88 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import multitubesLogo from '../../../images/Multitubes Logo.png';
 import NavBar from './Sections/NavBar';
+import ClientFields from './Sections/ClientFields';
 import styles from './FirstStepPage.module.css';
+import axios from 'axios'; 
+import { useNavigate } from 'react-router-dom';
+import Header from '../Header/Header';
 
-// Validation schema with Yup
 const validationSchema = Yup.object({
   line: Yup.number().required('Ligne is required').positive().integer(),
   date: Yup.date().required('Date is required').nullable(),
   timeSlot: Yup.string().required('Horaire is required'),
-  client: Yup.string().required('Client is required'),
-  articleNavision: Yup.string().required('N° article NAVISION is required'),
-  orderNumber: Yup.string().required('N° Ordre is required'),
-  quantity: Yup.string().required('Quantité is required'),
+  clients: Yup.array().of(
+    Yup.object({
+      client: Yup.string().required('Client is required'),
+      articleNavision: Yup.string().required('N° article NAVISION is required'),
+      orderNumber: Yup.string().required('N° Ordre is required'),
+      quantity: Yup.string().required('Quantité is required'),
+    })
+  )
 });
 
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+const date = new Date();
+
 function FirstStep() {
+  const navigate = useNavigate(); 
+
+  const [clientFields, setClientFields] = useState([
+    { client: '', articleNavision: '', orderNumber: '', quantity: '' }
+  ]);
+
   const formik = useFormik({
     initialValues: {
       line: 1,
-      date: '08/07/2024',
+      date: formatDate(date),
       timeSlot: 'Matin',
-      client: 'Loukaiencli',
-      articleNavision: '04-520-5050-050',
-      orderNumber: '04-520-5050-050',
-      quantity: '04-520-5050-050',
+      clients: clientFields,
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-      // Handle form submission
+    onSubmit: async (values) => {
+      try {
+        // Extract data for Rapport and Client
+        const rapportData = {
+          line: values.line,
+          date: values.date,
+          timeSlot: values.timeSlot,
+        };
+
+        const rapportResponse = await axios.post('/api/rapport/', rapportData);
+
+        const rapportId = rapportResponse.data._id;
+
+        const clientData = values.clients.map(client => ({
+          ...client,
+          rapportId: rapportId
+        }));
+        //console.log("Client data : " + clientData);
+        await axios.post('/api/client/', clientData);
+
+        console.log('Data submitted successfully');
+        navigate("/SecondStep");
+      } catch (error) {
+        console.error('Error submitting data:', error);
+      }
     },
   });
 
+  const addClientFields = () => {
+    setClientFields([...clientFields, { client: '', articleNavision: '', orderNumber: '', quantity: '' }]);
+    formik.setFieldValue('clients', [...formik.values.clients, { client: '', articleNavision: '', orderNumber: '', quantity: '' }]);
+  };
+
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <img src={multitubesLogo} alt="Multitubes Logo" className={styles.logo} />
-      </header>
+      <Header nav="/"/>
 
       <div className={styles.navBar}>
         <NavBar />
@@ -58,9 +102,7 @@ function FirstStep() {
             <option value={2}>2</option>
             <option value={3}>3</option>
           </select>
-          {formik.touched.line && formik.errors.line ? (
-            <div className={styles.error}>{formik.errors.line}</div>
-          ) : null}
+          {formik.touched.line && formik.errors.line && <div className={styles.error}>{formik.errors.line}</div>}
         </div>
 
         <div className={styles.formRow}>
@@ -73,9 +115,7 @@ function FirstStep() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.date && formik.errors.date ? (
-            <div className={styles.error}>{formik.errors.date}</div>
-          ) : null}
+          {formik.touched.date && formik.errors.date && <div className={styles.error}>{formik.errors.date}</div>}
         </div>
 
         <div className={styles.formRow}>
@@ -83,6 +123,7 @@ function FirstStep() {
           <select
             id="timeSlot"
             name="timeSlot"
+            value={formik.values.timeSlot}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           >
@@ -90,69 +131,25 @@ function FirstStep() {
             <option value="Après-midi">Après-midi</option>
             <option value="Soir">Soir</option>
           </select>
-          {formik.touched.timeSlot && formik.errors.timeSlot ? (
-            <div className={styles.error}>{formik.errors.timeSlot}</div>
-          ) : null}
+          {formik.touched.timeSlot && formik.errors.timeSlot && <div className={styles.error}>{formik.errors.timeSlot}</div>}
         </div>
 
-        <div className={styles.formRow}>
-          <label htmlFor="client">Client :</label>
-          <input
-            type="text"
-            id="client"
-            name="client"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
+        {formik.values.clients.map((clientField, index) => (
+          <ClientFields
+            key={index}
+            index={index}
+            values={clientField}
+            handleChange={formik.handleChange}
+            handleBlur={formik.handleBlur}
+            errors={formik.errors.clients?.[index] || {}}
+            touched={formik.touched.clients?.[index] || {}}
           />
-          {formik.touched.client && formik.errors.client ? (
-            <div className={styles.error}>{formik.errors.client}</div>
-          ) : null}
-        </div>
-
-        <div className={styles.formRow}>
-          <label htmlFor="articleNavision">N° article NAVISION :</label>
-          <input
-            type="text"
-            id="articleNavision"
-            name="articleNavision"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.articleNavision && formik.errors.articleNavision ? (
-            <div className={styles.error}>{formik.errors.articleNavision}</div>
-          ) : null}
-        </div>
-
-        <div className={styles.formRow}>
-          <label htmlFor="orderNumber">N° Ordre :</label>
-          <input
-            type="text"
-            id="orderNumber"
-            name="orderNumber"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.orderNumber && formik.errors.orderNumber ? (
-            <div className={styles.error}>{formik.errors.orderNumber}</div>
-          ) : null}
-        </div>
-
-        <div className={styles.formRow}>
-          <label htmlFor="quantity">Quantité :</label>
-          <input
-            type="text"
-            id="quantity"
-            name="quantity"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.quantity && formik.errors.quantity ? (
-            <div className={styles.error}>{formik.errors.quantity}</div>
-          ) : null}
-        </div>
+        ))}
 
         <div className={styles.addButtonContainer}>
-          <button type="button" className={styles.addButton}>+</button>
+          <button type="button" className={styles.addButton} onClick={addClientFields}>
+            +
+          </button>
         </div>
 
         <button type="submit" className={styles.nextStep}>Étape suivante :</button>

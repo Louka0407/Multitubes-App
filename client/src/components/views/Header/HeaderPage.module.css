@@ -1,0 +1,31 @@
+.header {
+  display: flex;
+  align-items: center; /* Aligne les éléments verticalement au centre */
+  justify-content: space-between; /* Aligne les éléments horizontalement avec l'espace entre eux */
+  padding: 10px 20px;
+  margin-bottom: 40px;
+}
+
+.arrow {
+  font-size: 24px; /* Ajustez la taille de la flèche si nécessaire */
+  transition: transform 0.2s ease, color 0.2s ease; /* Ajoute une transition fluide pour l'effet */
+}
+
+.arrow:hover {
+  cursor: pointer; /* Change le curseur en pointeur lorsqu'on survole la flèche */
+}
+
+.arrow:active {
+  transform: scale(0.9); /* Réduit légèrement la taille de la flèche au clic */
+  color: #1890ff; /* Change la couleur de la flèche lorsqu'elle est cliquée */
+}
+
+.divLogo {
+  display: flex;
+  align-items: center; /* Assure que le logo est centré verticalement */
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+}
