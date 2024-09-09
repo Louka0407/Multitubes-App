@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import NavBar from './Sections/NavBar';
+import NavBar from '../NavBar/NavBar';
 import ClientFields from './Sections/ClientFields';
 import styles from './FirstStepPage.module.css';
 import axios from 'axios'; 
@@ -85,7 +85,7 @@ function FirstStep() {
       <Header nav="/"/>
 
       <div className={styles.navBar}>
-        <NavBar />
+        <NavBar currentStep="0"/>
       </div>
 
       <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
