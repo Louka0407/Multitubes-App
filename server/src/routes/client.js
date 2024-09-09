@@ -11,8 +11,6 @@ const { auth } = require("../middleware/auth");
 // Route pour créer un nouveau client
 router.post('/', async (req, res) => {
     try {
-        // Log des données reçues pour déboguer
-        console.log("Received data:", req.body);
         
         // Assurez-vous que req.body est bien un tableau
         if (!Array.isArray(req.body)) {

@@ -84,9 +84,7 @@ function FirstStep() {
     <div className={styles.container}>
       <Header nav="/"/>
 
-      <div className={styles.navBar}>
         <NavBar currentStep="0"/>
-      </div>
 
       <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
         <div className={styles.formRow}>

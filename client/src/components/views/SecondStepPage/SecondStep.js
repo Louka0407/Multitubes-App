@@ -1,8 +1,15 @@
 import React from 'react'
+import Header from '../Header/Header';
+import NavBar from '../NavBar/NavBar';
+
+
 
 function SecondStep() {
   return (
-    <div>SecondStep</div>
+    <div>      
+      <Header nav="/FirstStep"/>
+        <NavBar currentStep="1"/>
+    </div>
   )
 }
 
