@@ -3,6 +3,7 @@ const router = express.Router();
 const { Client } = require("../models/Client");
 const { auth } = require("../middleware/auth");
 const {Rapport} = require("../models/Rapport");
+const mongoose = require('mongoose');
 
 //=================================
 //             Client
@@ -17,7 +18,7 @@ router.post('/', async (req, res) => {
 
         const operations = req.body.map(client => ({
             updateOne: {
-                filter: { _id: client._id }, // Recherche du document avec l'_id
+                filter: { _id: client._id || new mongoose.Types.ObjectId() }, // Recherche du document avec l'_id
                 update: { $set: client }, // Mise à jour des champs du document
                 upsert: true // Création du document si non existant
             }
@@ -46,15 +47,11 @@ router.get('/:date', async (req, res) => {
             }
         });
 
-        if (!rapport) {
-            return res.status(404).json({ message: 'No report found for this date' });
-        }
-
         // Trouver tous les clients associés à ce rapport
         const clients = await Client.find({ rapportId: rapport._id });
         res.status(200).json(clients);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.log("pas de rapport trouvée");;
     }
 });
 

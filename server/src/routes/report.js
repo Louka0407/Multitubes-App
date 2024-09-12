@@ -42,25 +42,30 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:date', async (req, res) => {
-  try {
-      const { date } = req.params;
-      const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(date));
-      
-      // Rechercher un rapport existant pour la date actuelle
-      const existingReport = await Rapport.findOne({
-          date: {
-              $gte: startOfDay,
-              $lt: endOfDay
-          }
-      }); // Peupler les clients associés
+    try {
+        const { date } = req.params;
+        const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(date));
 
+        // Trouver le rapport pour la date donnée
+        const rapport = await Rapport.findOne({
+            date: {
+                $gte: startOfDay,
+                $lt: endOfDay
+            }
+        });
 
-      if (existingReport) {
-          res.status(200).json(existingReport);
-      }
-  } catch (err) {
-      res.status(400).json({ error: err.message });
-  }
+        if (!rapport) {
+            return res.json({ message: "Aucun rapport trouvé pour cette date" });
+        }
+
+        // Récupérer les clients associés au rapport trouvé
+        const clients = await Client.find({ rapportId: rapport._id });
+
+        res.status(200).json({ rapport, clients });
+    } catch (error) {
+        console.error('Erreur lors de la récupération du rapport:', error);
+        res.status(500).json({ error: "Erreur serveur lors de la récupération du rapport et des clients" });
+    }
 });
 
 module.exports = router;

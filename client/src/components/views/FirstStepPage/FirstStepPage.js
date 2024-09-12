@@ -33,16 +33,14 @@ const formatDate = (date) => {
 const FirstStep = () => {
   const navigate = useNavigate(); 
 
-  const [clientFields, setClientFields] = useState([
-    { client: '', articleNavision: '', orderNumber: '', quantity: '' }
-  ]);
-
   const formik = useFormik({
     initialValues: {
       line: 1,
-      date: formatDate(new Date()),
+      date: formatDate(new Date()), 
       timeSlot: 'Matin',
-      clients: clientFields,
+      clients: [
+        { client: '', articleNavision: '', orderNumber: '', quantity: '' }
+      ],
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -53,9 +51,11 @@ const FirstStep = () => {
           timeSlot: values.timeSlot,
         };
 
+        // Sauvegarde du rapport
         const rapportResponse = await axios.post('/api/report/', rapportData);
         const rapportId = rapportResponse.data._id;
 
+        // Sauvegarde des clients
         const clientData = values.clients.map(client => ({
           ...client,
           rapportId: rapportId
@@ -64,51 +64,50 @@ const FirstStep = () => {
         await axios.post('/api/client/', clientData);
 
         console.log('Data submitted successfully');
+        
+        // Après soumission, récupère les données à jour
+        await fetchReport();
+        
         navigate("/SecondStep");
+
       } catch (error) {
         console.error('Error submitting data:', error);
       }
     },
   });
 
-  // useEffect est exécuté une seule fois au début du chargement de la page 
-  // Permet de charger les données du rapport si il existe déjà
-  useEffect(() => {
-    const fetchReport = async () => {
-      try {
-        const formattedDate = formatDate(new Date(formik.values.date)); // Formater la date au format attendu
-        const response = await axios.get(`/api/report/${formattedDate}`);
-        const responseClient = await axios.get(`/api/client/${formattedDate}`);
+  // Fonction pour récupérer les données rapport + clients
+  const fetchReport = async () => {
+    try {
+      const formattedDate = formatDate(new Date(formik.values.date)); // Date à partir du formulaire
+      console.log('Formatted Date:', formattedDate);
 
-        if (response.data) {
-          const reportData = response.data;
-          const clientData = responseClient.data;
+      const response = await axios.get(`/api/report/${formattedDate}`);
 
-          // Mettre à jour les valeurs du formulaire avec les données existantes
-          formik.setValues({
-            line: reportData.line,
-            date: formatDate(new Date(reportData.date)),
-            timeSlot: reportData.timeSlot,
-            clients: clientData
-          });
-        }
-      } catch (error) {
-        // Gérer le cas où le rapport n'existe pas encore ou d'autres erreurs
-        if (error.response && error.response.status === 404) {
-          console.log('Aucun rapport trouvé pour cette date. Vous pouvez en créer un.');
-        } else {
-          console.error('Erreur lors de la récupération du rapport:', error);
-        }
+      if (response.data) {
+        const { rapport, clients } = response.data;
+
+        // Mise à jour des valeurs dans Formik
+        formik.setValues({
+          line: rapport.line,
+          date: formatDate(new Date(rapport.date)),
+          timeSlot: rapport.timeSlot,
+          clients: clients.length > 0 ? clients : formik.values.clients // Assure qu'il y a au moins un client
+        });
       }
-    };
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données:', error);
+    }
+  };
 
-    fetchReport(); // Appeler la fonction pour charger le rapport
-    // eslint-disable-next-line
-  }, [formik.values.date]);
+  // Appeler fetchReport au montage du composant
+  useEffect(() => {
+    fetchReport();
+  }, []); // Exécution une seule fois au montage
 
+  // Fonction pour ajouter un champ client
   const addClientFields = () => {
     const newClientField = { client: '', articleNavision: '', orderNumber: '', quantity: '' };
-    setClientFields([...clientFields, newClientField]);
     formik.setFieldValue('clients', [...formik.values.clients, newClientField]);
   };
 
@@ -163,7 +162,6 @@ const FirstStep = () => {
           {formik.touched.timeSlot && formik.errors.timeSlot && <div className={styles.error}>{formik.errors.timeSlot}</div>}
         </div>
 
-        {/* Le .map permet de split chaque client pour créer des visuels séparés*/}
         {formik.values.clients.map((clientField, index) => (
           <ClientFields
             key={index}
