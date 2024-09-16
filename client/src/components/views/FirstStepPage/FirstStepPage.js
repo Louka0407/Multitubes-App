@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import NavBar from '../NavBar/NavBar';
 import ClientFields from './Sections/ClientFields';
 import styles from './FirstStepPage.module.css';
-import axios from 'axios'; 
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const validationSchema = Yup.object({
   line: Yup.number().required('Ligne is required').positive().integer(),
   date: Yup.date().required('Date is required').nullable(),
-  timeSlot: Yup.string().required('Horaire is required'),
   clients: Yup.array().of(
     Yup.object({
       client: Yup.string().required('Client is required'),
@@ -26,89 +27,136 @@ const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-
-  return `${year}-${month}-${day}`; 
-}
+  return `${year}-${month}-${day}`;
+};
 
 const FirstStep = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [currentDate, setCurrentDate] = useState(formatDate(new Date()));
+  const [loading, setLoading] = useState(false); 
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   const formik = useFormik({
     initialValues: {
       line: 1,
-      date: formatDate(new Date()), 
-      timeSlot: 'Matin',
+      date: currentDate, 
       clients: [
         { client: '', articleNavision: '', orderNumber: '', quantity: '' }
       ],
     },
     validationSchema,
     onSubmit: async (values) => {
+      setIsSubmitting(true); 
       try {
+        const formattedDate = formatDate(new Date(values.date));
+
+        const response = await axios.get(`/api/report/${formattedDate}`);
+
+        const existingReport = response.data.rapport;
+
         const rapportData = {
           line: values.line,
           date: values.date,
-          timeSlot: values.timeSlot,
         };
 
-        // Sauvegarde du rapport
-        const rapportResponse = await axios.post('/api/report/', rapportData);
-        const rapportId = rapportResponse.data._id;
+        let rapportResponse;
+        if (existingReport) {
+          // Update existing report with PUT
+          rapportResponse = await axios.put(`/api/report/${existingReport._id}`, rapportData);
+        } else {
+          // Create new report with POST
+          rapportResponse = await axios.post('/api/report/', rapportData);
+        }
 
-        // Sauvegarde des clients
+        const rapportId = rapportResponse.data._id;
         const clientData = values.clients.map(client => ({
           ...client,
           rapportId: rapportId
         }));
 
         await axios.post('/api/client/', clientData);
-
-        console.log('Data submitted successfully');
+        console.log('Client data submitted successfully');
         
-        // Après soumission, récupère les données à jour
-        await fetchReport();
-        
-        navigate("/SecondStep");
+        // Reset form values after successful submission
+        formik.resetForm();
+        navigate("/SelectTimeSlotPage");
 
       } catch (error) {
         console.error('Error submitting data:', error);
+        alert('Une erreur s\'est produite lors de la soumission des données. Veuillez réessayer.');
+      } finally {
+        setIsSubmitting(false); 
       }
     },
   });
 
-  // Fonction pour récupérer les données rapport + clients
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async (date) => {
+    setLoading(true); 
     try {
-      const formattedDate = formatDate(new Date(formik.values.date)); // Date à partir du formulaire
-      console.log('Formatted Date:', formattedDate);
+      const formattedDate = formatDate(new Date(date));
 
       const response = await axios.get(`/api/report/${formattedDate}`);
 
-      if (response.data) {
+      if (response.data.message) {
+
+        // Reset form values to initial values if no report is found
+        formik.resetForm({
+          values: {
+            line: formik.initialValues.line,
+            date: formattedDate,
+            clients: formik.initialValues.clients,
+          }
+        });
+      } else {
         const { rapport, clients } = response.data;
 
-        // Mise à jour des valeurs dans Formik
         formik.setValues({
           line: rapport.line,
-          date: formatDate(new Date(rapport.date)),
-          timeSlot: rapport.timeSlot,
-          clients: clients.length > 0 ? clients : formik.values.clients // Assure qu'il y a au moins un client
+          date: formattedDate,
+          clients: clients.length > 0 ? clients : formik.initialValues.clients,
         });
       }
     } catch (error) {
-      console.error('Erreur lors de la récupération des données:', error);
+      console.error('Error fetching report data:', error.response ? error.response.data : error.message);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [formik]);
 
-  // Appeler fetchReport au montage du composant
   useEffect(() => {
-    fetchReport();
-  }, []); // Exécution une seule fois au montage
+    const controller = new AbortController();
+    const fetchData = async () => {
+      try {
+        await fetchReport(currentDate, { signal: controller.signal });
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          console.log('Request aborted');
+        } else {
+          console.error(error);
+        }
+      }
+    };
 
-  // Fonction pour ajouter un champ client
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
+  }, [currentDate]);
+
   const addClientFields = () => {
     const newClientField = { client: '', articleNavision: '', orderNumber: '', quantity: '' };
     formik.setFieldValue('clients', [...formik.values.clients, newClientField]);
+  };
+
+  const handleDateChange = (date) => {
+    const formattedDate = formatDate(date);
+    setCalendarDate(date);
+    setCurrentDate(formattedDate); 
+    formik.setFieldValue('date', formattedDate);
+    setShowCalendar(false);
   };
 
   return (
@@ -117,6 +165,29 @@ const FirstStep = () => {
       <NavBar currentStep="0" />
 
       <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
+        <div className={styles.formRow}>
+          <label htmlFor="date">Date :</label>
+          <div className={styles.dateContainer}>
+            <input
+              type="text"
+              id="date"
+              name="date"
+              value={formik.values.date}
+              onClick={() => setShowCalendar(!showCalendar)}
+              readOnly
+            />
+            {showCalendar && (
+              <div className={styles.calendarWrapper}>
+                <Calendar
+                  onChange={handleDateChange}
+                  value={calendarDate}
+                />
+              </div>
+            )}
+          </div>
+          {formik.touched.date && formik.errors.date && <div className={styles.error}>{formik.errors.date}</div>}
+        </div>
+
         <div className={styles.formRow}>
           <label htmlFor="line">Ligne :</label>
           <select
@@ -131,35 +202,6 @@ const FirstStep = () => {
             <option value={3}>3</option>
           </select>
           {formik.touched.line && formik.errors.line && <div className={styles.error}>{formik.errors.line}</div>}
-        </div>
-
-        <div className={styles.formRow}>
-          <label htmlFor="date">Date :</label>
-          <input
-            type="text"
-            id="date"
-            name="date"
-            value={formik.values.date}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
-          {formik.touched.date && formik.errors.date && <div className={styles.error}>{formik.errors.date}</div>}
-        </div>
-
-        <div className={styles.formRow}>
-          <label htmlFor="timeSlot">Horaire :</label>
-          <select
-            id="timeSlot"
-            name="timeSlot"
-            value={formik.values.timeSlot}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          >
-            <option value="Matin">Matin</option>
-            <option value="Après-midi">Après-midi</option>
-            <option value="Soir">Soir</option>
-          </select>
-          {formik.touched.timeSlot && formik.errors.timeSlot && <div className={styles.error}>{formik.errors.timeSlot}</div>}
         </div>
 
         {formik.values.clients.map((clientField, index) => (
@@ -180,10 +222,12 @@ const FirstStep = () => {
           </button>
         </div>
 
-        <button type="submit" className={styles.nextStep}>Étape suivante :</button>
+        <button type="submit" className={styles.nextStep} disabled={isSubmitting || loading}>
+          {loading ? 'Chargement...' : 'Étape suivante :'}
+        </button>
       </form>
     </div>
   );
-}
+};
 
 export default FirstStep;

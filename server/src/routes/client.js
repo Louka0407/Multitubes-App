@@ -18,9 +18,9 @@ router.post('/', async (req, res) => {
 
         const operations = req.body.map(client => ({
             updateOne: {
-                filter: { _id: client._id || new mongoose.Types.ObjectId() }, // Recherche du document avec l'_id
-                update: { $set: client }, // Mise à jour des champs du document
-                upsert: true // Création du document si non existant
+                filter: { _id: client._id || new mongoose.Types.ObjectId() }, 
+                update: { $set: client }, 
+                upsert: true 
             }
         }));
 
@@ -46,8 +46,10 @@ router.get('/:date', async (req, res) => {
                 $lt: endOfDay
             }
         });
+        if(!rapport){
+            return res.json({ message: "Aucun rapport trouvé pour cette date" });
+        }
 
-        // Trouver tous les clients associés à ce rapport
         const clients = await Client.find({ rapportId: rapport._id });
         res.status(200).json(clients);
     } catch (err) {

@@ -10,10 +10,6 @@ const rapportSchema = new Schema({
         type: Date,
         required: true,
     },
-    timeSlot: {
-        type: String,
-        required: true,
-    }
 });
 
 const Rapport = mongoose.model('Rapport', rapportSchema);

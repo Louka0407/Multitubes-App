@@ -7,6 +7,20 @@
   max-width: 1200px; /* Largeur maximale pour les grands écrans */
 }
 
+.dateContainer {
+  position: relative;
+}
+
+.calendarWrapper {
+  position: absolute;
+  top: 100%; /* Positionne le calendrier juste en dessous du champ de date */
+  left: 0;
+  z-index: 1000; /* Assure que le calendrier est au-dessus du reste du contenu */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
 
 /* Formulaire */
