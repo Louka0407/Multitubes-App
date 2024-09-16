@@ -6,10 +6,11 @@ const { Client } = require('../models/Client');
 
 // Fonction pour obtenir le début et la fin de la journée actuelle
 const getStartAndEndOfDay = (date) => {
-    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+    const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+    const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
     return { startOfDay, endOfDay };
 }
+
 
 // Route pour créer un rapport
 router.post('/', async (req, res) => {

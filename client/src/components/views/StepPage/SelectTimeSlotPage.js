@@ -1,60 +1,75 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDate } from '../DateContext/DateContext';
 
 const SelectTimeSlotPage = () => {
   const navigate = useNavigate();
+  const { selectedDate } = useDate();
 
   const handleSelectTimeSlot = (timeSlot) => {
-
     let firstHour;
+    let day = getDayOfWeek(selectedDate);
 
-    let date = new Date();
+    console.log("Selected Day: ", day);
 
-    let day = date.toLocaleString('fr-FR',{weekday: 'long'});
-    
-    if(day === "vendredi"){
-      if(timeSlot === "Matin"){
+    if(day === "Vendredi"){
+      if(timeSlot === "morning"){
         firstHour = 6;
       }
-      else if(timeSlot === "Après-midi"){
+      else if(timeSlot === "afternoon"){
         firstHour = 12;
       }
       else{
         firstHour = 18;
       }
-    }else if(timeSlot === "Jonction"){
-      firstHour = 0o0;
-    }else if(day === "samedi" || day === "dimanche"){
-      if(timeSlot === "matin"){
+    } else if(timeSlot === "junction"){
+      firstHour = 0;
+    } else if(day === "Samedi" || day === "Dimanche"){
+      if(timeSlot === "morning"){
         firstHour = 6;
       }
-      else if(timeSlot === "Après-midi"){
+      else if(timeSlot === "afternoon"){
         firstHour = 18;
       }
-    }else{
-      if(timeSlot === "Matin"){
+    } else {
+      if(timeSlot === "morning"){
         firstHour = 6;
-        timeSlot = "morning"
       }
-      else if(timeSlot === "Après-midi"){
+      else if(timeSlot === "afternoon"){
         firstHour = 14;
-        timeSlot = "afternoon"
       }
       else{
         firstHour = 22;
-        timeSlot = "night"
       }
     }
-    navigate(`/manage-hours/${timeSlot}/${firstHour}`);
+
+    navigate(`/manage-hours/${timeSlot}/${firstHour}`); 
   };
+
+  function getDayOfWeek(selectedDate) {
+    const date = new Date(selectedDate);
+    const daysOfWeek = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    return daysOfWeek[date.getDay()];
+  }
+
+  const day = getDayOfWeek(selectedDate);
 
   return (
     <div>
       <h1>Sélectionnez une période</h1>
-      <button onClick={() => handleSelectTimeSlot('Matin')}>Matin</button>
-      <button onClick={() => handleSelectTimeSlot('Après-midi')}>Après-midi</button>
-      <button onClick={() => handleSelectTimeSlot('Nuit')}>Nuit</button>
-      <button onClick={() => handleSelectTimeSlot('Jonction')}>Jonction</button>
+      {day === "Samedi" || day === "Dimanche" ? (
+        <>
+          <button onClick={() => handleSelectTimeSlot('morning')}>Matin</button>
+          <button onClick={() => handleSelectTimeSlot('afternoon')}>Après-midi</button>
+          {day === "Samedi" && <button onClick={() => handleSelectTimeSlot('junction')}>Jonction</button>}
+        </>
+      ) : (
+        <>
+          <button onClick={() => handleSelectTimeSlot('morning')}>Matin</button>
+          <button onClick={() => handleSelectTimeSlot('afternoon')}>Après-midi</button>
+          <button onClick={() => handleSelectTimeSlot('night')}>Nuit</button>
+        </>
+      )}
     </div>
   );
 };

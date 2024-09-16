@@ -11,24 +11,41 @@ const withAuthenticationCheck = (SpecificComponent, option, adminRoute = null) =
         const navigate = useNavigate();  
 
         useEffect(() => {
-            dispatch(auth()).then(response => {
+            const checkAuth = async () => {
+                try {
+                    const response = await dispatch(auth());
+                    if (response && response.payload) {
+                        const { payload } = response;
 
-                if (!response.payload.isAuth) {
-                    if (option) {
-                        navigate('/login'); 
-                    }
-                } else {
-                    if (adminRoute && !response.payload.isAdmin) {
-                        navigate('/'); 
-                    }
-                    else {
-                        if (option === false) {
-                            navigate('/');  
+                        if (payload === null) {
+                            console.error('Authentication response is null');
+                            navigate('/login'); // Redirection en cas de payload null
+                            return;
                         }
+
+                        if (!payload.isAuth) {
+                            if (option) {
+                                navigate('/login'); 
+                            }
+                        } else {
+                            if (adminRoute && !payload.isAdmin) {
+                                navigate('/'); 
+                            } else if (option === false) {
+                                navigate('/');  
+                            }
+                        }
+                    } else {
+                        console.error('Unexpected response structure:', response);
+                        navigate('/login'); // Redirection par défaut ou autre gestion
                     }
+                } catch (error) {
+                    console.error('Authentication check failed:', error);
+                    navigate('/login'); // Redirection en cas d'erreur
                 }
-            });
-        }, [dispatch, navigate]); 
+            };
+
+            checkAuth();
+        }, [dispatch, navigate, option, adminRoute]); 
 
         return (
             <SpecificComponent {...props} user={user} />

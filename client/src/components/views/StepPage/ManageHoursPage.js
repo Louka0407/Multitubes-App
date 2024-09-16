@@ -1,44 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDate } from '../DateContext/DateContext';
 
 // Liste des heures par période
 
 const ManageHoursPage = () => {
   const { timeSlot: rawTimeSlot, firstHour } = useParams();
   const navigate = useNavigate();
-  
+  const { selectedDate } = useDate();
+
   // Utilisation de useState pour gérer le duration
   const [duration, setDuration] = useState(0);  // Initialisation à 0
   const [timeSlot, setTimeSlot] = useState(rawTimeSlot);
-
   // Utilisation de useEffect pour définir duration une fois le composant monté
   useEffect(() => {
     let calculatedDuration;
-    let date = new Date();
-    let day = date.toLocaleString('fr-FR', { weekday: 'long' });
+    let day;
+    day = getDayOfWeek(selectedDate);
 
-    console.log("Jour : " + day);
-    
-    if (day === "vendredi") {
+    if (day === "Vendredi") {
+      if(timeSlot === "morning"){
+        calculatedDuration = 7;
+      }else if(timeSlot === "afternoon"){
+        calculatedDuration = 7;
+      }else{
+        calculatedDuration = 7;
+      }
+    } else if (timeSlot === "junction") {
       calculatedDuration = 7;
-    } else if (timeSlot === "Jonction") {
-      calculatedDuration = 7;
-    } else if (day === "samedi" || day === "dimanche") {
+    } else if (day === "Samedi" || day === "Dimanche") {
       calculatedDuration = 13;
     } else {
-      if (timeSlot === "Matin") {
-        setTimeSlot("morning");
+      if (timeSlot === "morning") {
         calculatedDuration = 9;
-      } else if (timeSlot === "Après-midi") {
-        setTimeSlot("afternoon");
+      } else if (timeSlot === "afternoon") {
         calculatedDuration = 9;
       } else {
-        setTimeSlot("night");
         calculatedDuration = 9;
       }
     }
 
+
     setDuration(calculatedDuration);  // Mise à jour de la durée dans l'état
+    // eslint-disable-next-line
   }, [timeSlot]);
 
   const handleSubmit = (e) => {
@@ -61,6 +65,18 @@ const ManageHoursPage = () => {
 
   const formattedFirstHour = String(firstHour).padStart(2, '0');
 
+
+  function getDayOfWeek(selectedDate) {
+    const date = new Date(selectedDate);
+  
+    const daysOfWeek = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  
+    // Récupère le jour de la semaine (0 pour dimanche, 1 pour lundi, etc.)
+    const dayOfWeekIndex = date.getDay();
+  
+    // Retourne le jour correspondant
+    return daysOfWeek[dayOfWeekIndex];
+  }
 
   return (
     <div>

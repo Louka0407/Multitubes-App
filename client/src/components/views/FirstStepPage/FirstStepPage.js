@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { useDate } from '../DateContext/DateContext';
 
 const validationSchema = Yup.object({
   line: Yup.number().required('Ligne is required').positive().integer(),
@@ -31,6 +32,8 @@ const formatDate = (date) => {
 };
 
 const FirstStep = () => {
+  const { setSelectedDate } = useDate();
+
   const navigate = useNavigate();
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
@@ -144,6 +147,7 @@ const FirstStep = () => {
     return () => {
       controller.abort();
     };
+    // eslint-disable-next-line
   }, [currentDate]);
 
   const addClientFields = () => {
@@ -153,6 +157,7 @@ const FirstStep = () => {
 
   const handleDateChange = (date) => {
     const formattedDate = formatDate(date);
+    setSelectedDate(formattedDate);
     setCalendarDate(date);
     setCurrentDate(formattedDate); 
     formik.setFieldValue('date', formattedDate);
