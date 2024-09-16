@@ -1,149 +1,177 @@
 /* Conteneur principal */
 .container {
-    margin: 0 auto;
-    padding: 30px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Entête de la page */
-  .header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  
-  h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 10px;
-  }
-  
-  /* Conteneur du formulaire */
-  .formContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  
-  /* Chaque ligne de champ */
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Entête de la page */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.divG {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 10%;
+  margin-bottom: 3%;
+}
+
+/* Conteneur du texte de survol */
+.tooltip {
+  position: absolute;
+  bottom: 100%; /* Positionner au-dessus de l'élément */
+  right: 0; /* Aligner à droite */
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 12px;
+  z-index: 10; /* Assurez-vous que le texte est au-dessus des autres éléments */
+}
+
+/* Afficher le texte au survol */
+.tooltipContainer:hover .tooltip {
+  opacity: 1;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Conteneur du formulaire */
+.formContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Chaque ligne de champ */
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 48%; /* Ajustement pour deux colonnes */
+  margin-bottom: 20px;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.row:hover {
+  background-color: #f1f1f1;
+}
+
+/* Style des labels */
+.row label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* Bouton de sélection dynamique */
+.selectButton {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  min-width: 120px;
+  transition: border-color 0.3s ease;
+}
+
+.selectButton:focus {
+  border-color: #f6a623;
+  outline: none;
+}
+
+/* Couleurs dynamiques pour les réponses */
+.ok {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.nok {
+  background-color: #f44336;
+  color: white;
+}
+
+.na {
+  background-color: #FF9800;
+  color: white;
+}
+
+.a {
+  background-color: #9E9E9E;
+  color: white;
+}
+
+/* Remarques */
+.remarks {
+  width: 100%;
+  margin-top: 30px;
+}
+
+.remarks label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.remarks textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  resize: none;
+  min-height: 120px;
+}
+
+/* Bouton "Étape suivante" */
+.nextStep {
+  background-color: #f6a623;
+  color: white;
+  font-size: 16px;
+  padding: 14px 30px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin: 40px auto;
+  display: block;
+  width: 220px;
+  text-align: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nextStep:hover {
+  background-color: #e6951f;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 48%; /* Ajustement pour deux colonnes */
-    margin-bottom: 20px;
-    padding: 12px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
+      width: 100%;
   }
-  
-  .row:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* Style des labels */
-  .row label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #555;
-  }
-  
-  /* Bouton de sélection dynamique */
-  .selectButton {
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    cursor: pointer;
-    min-width: 120px;
-    transition: border-color 0.3s ease;
-  }
-  
-  .selectButton:focus {
-    border-color: #f6a623;
-    outline: none;
-  }
-  
-  /* Couleurs dynamiques pour les réponses */
-  .ok {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .nok {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  .na {
-    background-color: #FF9800;
-    color: white;
-  }
-  
-  .a {
-    background-color: #9E9E9E;
-    color: white;
-  }
-  
-  /* Remarques */
-  .remarks {
-    width: 100%;
-    margin-top: 30px;
-  }
-  
-  .remarks label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 10px;
-    display: block;
-  }
-  
-  .remarks textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    resize: none;
-    min-height: 120px;
-  }
-  
-  /* Bouton "Étape suivante" */
+
   .nextStep {
-    background-color: #f6a623;
-    color: white;
-    font-size: 16px;
-    padding: 14px 30px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    margin: 40px auto;
-    display: block;
-    width: 220px;
-    text-align: center;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .nextStep:hover {
-    background-color: #e6951f;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .row {
       width: 100%;
-    }
-  
-    .nextStep {
-      width: 100%;
-    }
   }
-  
+}

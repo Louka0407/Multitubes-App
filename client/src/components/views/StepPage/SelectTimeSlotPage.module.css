@@ -1,0 +1,92 @@
+/* Conteneur principal */
+.container {
+    margin: 0 auto;
+    padding: 30px;
+    text-align: center; /* Centrer le texte */
+  }
+  
+  /* Titre principal */
+  h1 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 40px;
+    font-weight: 700;
+  }
+  
+  /* Conteneur des boutons */
+  .buttonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto; /* Centrer le conteneur des boutons */
+  }
+  
+  /* Style des boutons de créneaux */
+  .buttonContainer button {
+    background-color: #FD7401;
+    color: white;
+    font-size: 18px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .buttonContainer button:hover {
+    background-color: #dd6604;
+    transform: translateY(-3px);
+  }
+  
+  .buttonContainer button:active {
+    transform: translateY(0);
+  }
+  
+  /* Couleurs différentes pour chaque créneau */
+  .morningButton {
+    background-color: #28a745; /* Vert pour le matin */
+  }
+  
+  .afternoonButton {
+    background-color: #ffc107; /* Jaune pour l'après-midi */
+  }
+  
+  .nightButton {
+    background-color: #6f42c1; /* Violet pour la nuit */
+  }
+  
+  .junctionButton {
+    background-color: #fd7e14; /* Orange pour la jonction */
+  }
+  
+  .morningButton:hover {
+    background-color: #218838;
+  }
+  
+  .afternoonButton:hover {
+    background-color: #e0a800;
+  }
+  
+  .nightButton:hover {
+    background-color: #5a3290;
+  }
+  
+  .junctionButton:hover {
+    background-color: #e46206;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 24px;
+    }
+  
+    .buttonContainer button {
+      font-size: 16px;
+      padding: 12px 20px;
+    }
+  }
+  

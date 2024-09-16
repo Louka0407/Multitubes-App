@@ -3,7 +3,6 @@
   align-items: center; /* Aligne les éléments verticalement au centre */
   justify-content: space-between; /* Aligne les éléments horizontalement avec l'espace entre eux */
   padding: 10px 20px;
-  margin-bottom: 40px;
 }
 
 .arrow {

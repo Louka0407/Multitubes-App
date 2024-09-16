@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDate } from '../DateContext/DateContext';
+import { toast } from 'react-toastify';
 import styles from './ManageHoursPage.module.css';
 import Header from '../Header/Header';
 import NavBar from '../NavBar/NavBar';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const ManageHoursPage = () => {
   const { timeSlot: rawTimeSlot, firstHour } = useParams();
   const navigate = useNavigate();
   const { selectedDate } = useDate();
 
-  // État pour les réponses par défaut (toutes à "OK")
   const [responses, setResponses] = useState({
     'Netteté décor et texte': 'OK',
     'Orientation Cap': 'OK',
@@ -20,13 +21,16 @@ const ManageHoursPage = () => {
     'Hauteur étiquette/décor': 'OK',
     'Spot': 'OK',
     'Tenue tête': 'OK',
+    'Pas d\'ovalité':'OK',
+    'Aspect vernis':'OK',
+    'Tube droit':'OK',
+    'Pas de variation de teinte':'OK',
+    'Ligne de découpe':'OK',
   });
 
-  // Utilisation de useState pour gérer la durée
   const [duration, setDuration] = useState(0); 
   const [timeSlot, setTimeSlot] = useState(rawTimeSlot);
-
-  // Utilisation de useEffect pour calculer la durée
+  
   useEffect(() => {
     let calculatedDuration;
     const day = getDayOfWeek(selectedDate);
@@ -44,7 +48,6 @@ const ManageHoursPage = () => {
     setDuration(calculatedDuration);
   }, [timeSlot, selectedDate]);
 
-  // Gestion de la modification des réponses
   const handleResponseChange = (key, value) => {
     setResponses({
       ...responses,
@@ -52,7 +55,6 @@ const ManageHoursPage = () => {
     });
   };
 
-  // Gestion de la soumission et navigation
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -65,7 +67,10 @@ const ManageHoursPage = () => {
       navigate('/completion');
     }
 
+    toast.success('Soumission réussie !'); // Affichage de la notification
+
     setDuration(prevDuration => prevDuration - 1); 
+    window.scrollTo(0, 0);
   };
 
   const formattedFirstHour = String(firstHour).padStart(2, '0');
@@ -79,11 +84,20 @@ const ManageHoursPage = () => {
   return (
     <div className={styles.container}>
       <Header nav="retour" />
-      <NavBar currentStep="1" />
+      <NavBar currentStep="2" />
 
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h1>Heure : {formattedFirstHour}</h1>
-      </header>
+      </div>
+
+      <div className={styles.divG}>
+        <div className={styles.tooltipContainer}>
+          <InfoCircleOutlined style={{ color: '#08c', fontSize: '20px' }} />
+          <div className={styles.tooltip}>
+            OK = Conforme / NOK = Non conforme / NA = Absent / A = Arret
+          </div>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className={styles.formContainer}>
         {Object.keys(responses).map((label, index) => (
@@ -92,7 +106,7 @@ const ManageHoursPage = () => {
             <select
               value={responses[label]}
               onChange={(e) => handleResponseChange(label, e.target.value)}
-              className={`${styles.selectButton} ${styles[responses[label].toLowerCase()]}`} // Appliquer la couleur en fonction de la réponse
+              className={`${styles.selectButton} ${styles[responses[label].toLowerCase()]}`}
             >
               <option value="OK">OK</option>
               <option value="NOK">NOK</option>

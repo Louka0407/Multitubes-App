@@ -13,6 +13,10 @@ function Header(props) {
     }else{
       navigate(props.nav);
     }
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 10);
+
   };
 
   return (
