@@ -7,16 +7,22 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 function Header(props) {
   const navigate = useNavigate();
 
+  const smoothScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const handleClick = () => {
-    if(props.nav === "retour"){
+    if (props.nav === "retour") {
       navigate(-1);
-    }else{
+    } else {
       navigate(props.nav);
     }
     setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 10);
-
+      smoothScrollToTop();
+    }, 100);
   };
 
   return (
