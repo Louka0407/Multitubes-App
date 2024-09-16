@@ -8,7 +8,11 @@ function Header(props) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(props.nav);
+    if(props.nav === "retour"){
+      navigate(-1);
+    }else{
+      navigate(props.nav);
+    }
   };
 
   return (
