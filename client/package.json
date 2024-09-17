@@ -59,7 +59,9 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.24.7",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "http-proxy-middleware": "^1.0.3",
+    "react-refresh": "^0.14.2",
     "react-scripts": "^4.0.0"
   }
 }

@@ -11,27 +11,10 @@ const reportEntrySchema = new mongoose.Schema({
     enum: ['morning', 'afternoon', 'night'],
     required: true,
   },
-  workHours: [
-    {
-      hour: {
-        type: String,
-        required: true,
-      },
-      status: {
-        type: String,
-        enum: ['A', 'NA', 'OK', 'NOK'],
-        required: true,
-      },
-      note: {
-        type: String,
-        default: '',
-      }
-    }
-  ],
   note:{
     type: String,
     default: '',
-  }
+  },
 }, { timestamps: true });
 
 const ReportEntry = mongoose.model('ReportEntry', reportEntrySchema);
