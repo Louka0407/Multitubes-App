@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const reportEntrySchema = new mongoose.Schema({
   reportId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Report',
+    ref: 'Rapport',
     required: true,
   },
   timeSlot: {
     type: String,
-    enum: ['Matin', 'Après-midi', 'Soir'],
+    enum: ['morning', 'afternoon', 'night'],
     required: true,
   },
   workHours: [
@@ -17,14 +17,23 @@ const reportEntrySchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-      description: {
+      status: {
         type: String,
+        enum: ['A', 'NA', 'OK', 'NOK'],
         required: true,
+      },
+      note: {
+        type: String,
+        default: '',
       }
     }
-  ]
+  ],
+  note:{
+    type: String,
+    default: '',
+  }
 }, { timestamps: true });
 
 const ReportEntry = mongoose.model('ReportEntry', reportEntrySchema);
 
-module.exports = ReportEntry;
+module.exports = {ReportEntry};

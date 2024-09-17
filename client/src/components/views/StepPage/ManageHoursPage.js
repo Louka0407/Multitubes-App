@@ -13,19 +13,19 @@ const ManageHoursPage = () => {
   const { selectedDate } = useDate();
 
   const [responses, setResponses] = useState({
-    'Netteté décor et texte': 'OK',
-    'Orientation Cap': 'OK',
-    'Cap bien vissé / snappée': 'OK',
-    'Alu seal bien fixé': 'OK',
-    'Pas de dommages sur les tubes': 'OK',
-    'Hauteur étiquette/décor': 'OK',
-    'Spot': 'OK',
-    'Tenue tête': 'OK',
-    'Pas d\'ovalité':'OK',
-    'Aspect vernis':'OK',
-    'Tube droit':'OK',
-    'Pas de variation de teinte':'OK',
-    'Ligne de découpe':'OK',
+    'Netteté décor et texte': 'NA',
+    'Orientation Cap': 'NA',
+    'Cap bien vissé / snappée': 'NA',
+    'Alu seal bien fixé': 'NA',
+    'Pas de dommages sur les tubes': 'NA',
+    'Hauteur étiquette/décor': 'NA',
+    'Spot': 'NA',
+    'Tenue tête': 'NA',
+    'Pas d\'ovalité':'NA',
+    'Aspect vernis':'NA',
+    'Tube droit':'NA',
+    'Pas de variation de teinte':'NA',
+    'Ligne de découpe':'NA',
   });
 
   const [duration, setDuration] = useState(0); 
@@ -94,7 +94,7 @@ const ManageHoursPage = () => {
         <div className={styles.tooltipContainer}>
           <InfoCircleOutlined style={{ color: '#08c', fontSize: '20px' }} />
           <div className={styles.tooltip}>
-            OK = Conforme / NOK = Non conforme / NA = Absent / A = Arret
+            OK = Conforme / NOK = Non conforme / NA = Non applicable / A = Arret
           </div>
         </div>
       </div>

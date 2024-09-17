@@ -4,12 +4,14 @@ import { useDate } from '../DateContext/DateContext';
 import styles from './SelectTimeSlotPage.module.css';
 import Header from '../Header/Header';
 import NavBar from '../NavBar/NavBar';
+import axios from 'axios';
+
 
 const SelectTimeSlotPage = () => {
   const navigate = useNavigate();
   const { selectedDate } = useDate();
 
-  const handleSelectTimeSlot = (timeSlot) => {
+  const handleSelectTimeSlot = async (timeSlot) => {
     let firstHour;
     let day = getDayOfWeek(selectedDate);
 
@@ -38,7 +40,15 @@ const SelectTimeSlotPage = () => {
         firstHour = 22;
       }
     }
-
+    try{
+      const response = await axios.post('/api/reportEntry/create-entry',{
+        selectedDate,
+        timeSlot,
+      });
+      console.log("Compte rendu créé : ", response.data);
+    }catch(err) {
+      console.error('Erreur lors de la création du compte rendu: ', err);
+    }
     navigate(`/manage-hours/${timeSlot}/${firstHour}`);
   };
 
