@@ -41,11 +41,10 @@ const SelectTimeSlotPage = () => {
       }
     }
     try{
-      const response = await axios.post('/api/reportEntry/create-entry',{
+      await axios.post('/api/reportEntry/create-entry',{
         selectedDate,
         timeSlot,
       });
-      console.log("Compte rendu créé : ", response.data);
     }catch(err) {
       console.error('Erreur lors de la création du compte rendu: ', err);
     }
