@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation} from 'react-router-dom';
 import { useDate } from '../DateContext/DateContext';
 import { toast } from 'react-toastify';
 import styles from './ManageHoursPage.module.css';
@@ -32,6 +32,8 @@ const ManageHoursPage = () => {
   const [duration, setDuration] = useState(0);
   const [timeSlot, setTimeSlot] = useState(rawTimeSlot);
   const [note, setNote] = useState(''); // État pour la note
+  const location = useLocation(); // Hook pour écouter les changements d'URL
+
 
   useEffect(() => {
     let calculatedDuration;
@@ -50,32 +52,6 @@ const ManageHoursPage = () => {
     setDuration(calculatedDuration);
   }, [timeSlot, selectedDate]);
 
-  useEffect(() => {
-    // Réinitialiser les réponses à NA lorsque le timeSlot ou le firstHour change
-    setResponses({
-      'Netteté décor et texte': 'NA',
-      'Orientation Cap': 'NA',
-      'Cap bien vissé / snappée': 'NA',
-      'Alu seal bien fixé': 'NA',
-      'Pas de dommages sur les tubes': 'NA',
-      'Hauteur étiquette/décor': 'NA',
-      'Spot': 'NA',
-      'Tenue tête': 'NA',
-      'Pas d\'ovalité':'NA',
-      'Aspect vernis':'NA',
-      'Tube droit':'NA',
-      'Pas de variation de teinte':'NA',
-      'Ligne de découpe':'NA',
-    });
-    setNote(''); // Réinitialiser la note
-  }, [timeSlot, firstHour]);
-
-  const handleResponseChange = (key, value) => {
-    setResponses({
-      ...responses,
-      [key]: value
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Empêcher le comportement par défaut du formulaire
@@ -119,6 +95,64 @@ const ManageHoursPage = () => {
       toast.error('Erreur lors de la soumission.');
     }
   };
+
+  useEffect(() => {
+    console.log("date : " + selectedDate);
+    async function fetchData(){
+
+      const response = await axios.get(`/api/reportEntry/reportentrydata`, {
+        params: {
+          selectedDate,
+          timeSlot,
+          formattedFirstHour
+        }
+      });
+      
+      const existingReportEntry = response.data;
+
+      if(existingReportEntry.note){
+        setNote(existingReportEntry.note);
+
+        if (existingReportEntry.workHours && existingReportEntry.workHours.length > 0) {
+          const updatedResponses = {};
+          existingReportEntry.workHours.forEach(workHour => {
+            updatedResponses[workHour.title] = workHour.status || 'NA'; // On utilise 'NA' par défaut si aucun statut n'est trouvé
+          });
+          setResponses(updatedResponses); // Mettre à jour l'état des réponses avec les données récupérées
+        }
+
+      }else{
+        setResponses({
+          'Netteté décor et texte': 'NA',
+          'Orientation Cap': 'NA',
+          'Cap bien vissé / snappée': 'NA',
+          'Alu seal bien fixé': 'NA',
+          'Pas de dommages sur les tubes': 'NA',
+          'Hauteur étiquette/décor': 'NA',
+          'Spot': 'NA',
+          'Tenue tête': 'NA',
+          'Pas d\'ovalité':'NA',
+          'Aspect vernis':'NA',
+          'Tube droit':'NA',
+          'Pas de variation de teinte':'NA',
+          'Ligne de découpe':'NA',
+        });
+        setNote('');
+      }
+    }
+
+    fetchData();
+    // eslint-disable-next-line 
+  }, [location.key]);
+
+  const handleResponseChange = (key, value) => {
+    setResponses({
+      ...responses,
+      [key]: value
+    });
+  };
+
+
 
   const formattedFirstHour = String(firstHour).padStart(2, '0');
 

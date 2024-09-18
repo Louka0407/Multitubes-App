@@ -1,11 +1,19 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 // Créer le contexte
 const DateContext = createContext();
 
 // Créer le provider du contexte
 export const DateProvider = ({ children }) => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const storedDate = localStorage.getItem('selectedDate');
+  const initialDate = storedDate ? new Date(storedDate) : new Date();
+
+  const [selectedDate, setSelectedDate] = useState(initialDate);
+
+  // recup la date du localstorage
+  useEffect(() => {
+    localStorage.setItem('selectedDate', selectedDate);
+  }, [selectedDate]);
 
   return (
     <DateContext.Provider value={{ selectedDate, setSelectedDate }}>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {ReportEntry} = require('../models/ReportEntry');
 const {Rapport} = require('../models/Rapport');
+const { WorkHours } = require('../models/WorkHours');
 
 const getStartAndEndOfDay = (date) => {
     const startOfDay = new Date(date.setHours(0, 0, 0, 0));
@@ -90,6 +91,44 @@ router.put('/update', async (req, res) => {
     } catch (err) {
         console.error('Erreur lors de la mise à jour du compte rendu:', err);
         res.status(500).json({ message: "Erreur serveur" });
+    }
+});
+
+router.get('/reportentrydata', async (req, res) =>{
+
+    const { selectedDate, timeSlot , formattedFirstHour} = req.query;
+    try{
+        const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(selectedDate));
+
+        // Trouver le rapport pour la date donnée
+        const rapport = await Rapport.findOne({
+            date: {
+                $gte: startOfDay,
+                $lt: endOfDay
+            }
+        });
+
+        if(rapport){
+            const existingReportEntry = await ReportEntry.findOne({
+                reportId: rapport._id,
+                timeSlot,
+            });
+
+            if(existingReportEntry){
+                const existingWorkHour = await WorkHours.findOne({
+                    reportEntryId: existingReportEntry._id,
+                    hour:formattedFirstHour
+                })
+                if(existingWorkHour){
+                    res.status(200).json(existingWorkHour);
+                }
+                else{
+                    res.json({message : "Pas de WorkHour trouvée"});
+                }
+            }
+        }
+    }catch(err){
+        console.log("pas de compte rendu trouvé");
     }
 });
 

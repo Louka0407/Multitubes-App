@@ -22,7 +22,7 @@ function Header(props) {
     }
     setTimeout(() => {
       smoothScrollToTop();
-    }, 100);
+    }, 10);
   };
 
   return (
