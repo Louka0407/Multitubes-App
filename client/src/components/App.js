@@ -7,6 +7,7 @@ import FirstStep from './views/FirstStepPage/FirstStepPage.js';
 import SelectTimeSlotPage from './views/StepPage/SelectTimeSlotPage.js';
 import ManageHoursPage from './views/StepPage/ManageHoursPage.js';
 import { DateProvider } from './views/DateContext/DateContext.js';
+import CompletionPage from './views/Completion/CompletionPage.js';
 
 //null   Anyone Can go inside
 //true   only logged in user can go inside
@@ -29,6 +30,7 @@ function App() {
                     <Route path='/FirstStep' element={<FirstStep/>}/>
                     <Route path='/SelectTimeSlotPage' element={<SelectTimeSlotPage/>}/>
                     <Route path="/manage-hours/:timeSlot/:firstHour" element={<ManageHoursPage />} />
+                    <Route path='/completion' element={<CompletionPage/>}/>
                 </Routes>
             </DateProvider>
         </Suspense>

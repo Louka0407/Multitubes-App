@@ -23,16 +23,9 @@ router.post('/', async (req, res) => {
     const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(selectedDate));
     const rapport = await Rapport.findOne({ date: { $gte: startOfDay, $lt: endOfDay } });
 
-    if (!rapport) {
-      return res.status(404).json({ message: "Aucun rapport trouvé pour cette date." });
-    }
 
     // Étape 2: Trouver le reportEntry correspondant au timeSlot
     const reportEntry = await ReportEntry.findOne({ reportId: rapport._id, timeSlot });
-
-    if (!reportEntry) {
-      return res.status(404).json({ message: "Aucune entrée de rapport trouvée pour ce créneau horaire." });
-    }
 
     // Étape 3: Vérifier si les workHours existent déjà
     const existingWorkHours = await WorkHours.findOne({ reportEntryId: reportEntry._id, hour });
@@ -64,9 +57,9 @@ router.put('/update/:id', async (req, res) => {
   const workHoursId = req.params.id;
   const hour = req.body.hour;
 
-  if (!note || !workHours || !Array.isArray(workHours)) {
-    return res.status(400).json({ message: "Paramètres manquants ou incorrects." });
-  }
+  // if (!note || !workHours || !Array.isArray(workHours)) {
+  //   return res.status(400).json({ message: "Paramètres manquants ou incorrects." });
+  // }
 
   try {
     // Vérification de l'existence des workHours à mettre à jour

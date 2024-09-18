@@ -41,7 +41,7 @@ const ManageHoursPage = () => {
 
     if (day === 'Vendredi') {
       calculatedDuration = 7;
-    } else if (timeSlot === 'junction') {
+    } else if (timeSlot === 'Junction') {
       calculatedDuration = 7;
     } else if (day === 'Samedi' || day === 'Dimanche') {
       calculatedDuration = 13;
@@ -87,6 +87,7 @@ const ManageHoursPage = () => {
       }
 
         toast.success('Soumission réussie !');
+        console.log("duration : " + duration)
         setDuration(prevDuration => prevDuration - 1);
         window.scrollTo(0, 0);
       
@@ -143,7 +144,7 @@ const ManageHoursPage = () => {
 
     fetchData();
     // eslint-disable-next-line 
-  }, [location.key]);
+  }, [location.pathname]);
 
   const handleResponseChange = (key, value) => {
     setResponses({

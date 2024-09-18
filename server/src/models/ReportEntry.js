@@ -8,7 +8,7 @@ const reportEntrySchema = new mongoose.Schema({
   },
   timeSlot: {
     type: String,
-    enum: ['morning', 'afternoon', 'night'],
+    enum: ['morning', 'afternoon', 'night','junction'],
     required: true,
   },
   note:{
