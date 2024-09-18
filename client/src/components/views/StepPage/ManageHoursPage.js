@@ -41,7 +41,7 @@ const ManageHoursPage = () => {
 
     if (day === 'Vendredi') {
       calculatedDuration = 7;
-    } else if (timeSlot === 'Junction') {
+    } else if (timeSlot === 'junction') {
       calculatedDuration = 7;
     } else if (day === 'Samedi' || day === 'Dimanche') {
       calculatedDuration = 13;
