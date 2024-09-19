@@ -2,7 +2,6 @@ import React from 'react';
 
 import creerRapportImg from '../../../images/Créer un rapport.png';
 import genererRapportImg from '../../../images/Générer un rapport.png';
-import modifierRapportImg from '../../../images/Modifier un rapport.png';
 import multitubesLogo from '../../../images/Multitubes Logo.png';
 
 import styles from './LandingPage.module.css';
@@ -31,10 +30,6 @@ function LandingPage() {
         <div className={styles.optionCard}>
           <img src={genererRapportImg} alt="Générer un rapport" className={styles.optionImage} />
           <p>Générer un rapport</p>
-        </div>
-        <div className={styles.optionCard}>
-          <img src={modifierRapportImg} alt="Modifier un rapport" className={styles.optionImage} />
-          <p>Modifier un rapport</p>
         </div>
       </div>
     </div>
