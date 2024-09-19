@@ -55,6 +55,7 @@ const CompletionPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const userId = window.localStorage.getItem('userId');  
 
     try {
       // Mise à jour de la note dans le ReportEntry
@@ -62,6 +63,7 @@ const CompletionPage = () => {
         selectedDate,
         timeSlot,
         note, // La nouvelle note
+        userId,
       });
 
       // Rediriger vers la page de fin après la soumission

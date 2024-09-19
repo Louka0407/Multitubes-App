@@ -3,6 +3,7 @@ const router = express.Router();
 const {ReportEntry} = require('../models/ReportEntry');
 const {Rapport} = require('../models/Rapport');
 const { WorkHours } = require('../models/WorkHours');
+const { auth } = require("../middleware/auth");
 
 const getStartAndEndOfDay = (date) => {
     const startOfDay = new Date(date.setHours(0, 0, 0, 0));
@@ -11,7 +12,7 @@ const getStartAndEndOfDay = (date) => {
 };
 
 
-router.post('/create-entry' , async (req, res) => {
+router.post('/create-entry' , auth, async (req, res) => {
     const { selectedDate, timeSlot } = req.body;
     try{
         const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(selectedDate));
@@ -42,7 +43,8 @@ router.post('/create-entry' , async (req, res) => {
             reportId: rapport._id,
             timeSlot,
             workHours: [],
-            note: ''
+            note: '',
+            createBy: req.user._id
         });
 
         await reportEntry.save();
@@ -55,7 +57,7 @@ router.post('/create-entry' , async (req, res) => {
 });
 
 router.put('/update', async (req, res) => {
-    const { selectedDate, timeSlot, note, workHours } = req.body;
+    const { selectedDate, timeSlot, note, workHours, userId } = req.body;
 
     // if (!selectedDate || !timeSlot) {
     //     return res.status(400).json({ message: "Les paramètres 'selectedDate' et 'timeSlot' sont requis." });
@@ -79,7 +81,7 @@ router.put('/update', async (req, res) => {
         // Mettre à jour ou créer l'entrée de rapport
         const updatedReportEntry = await ReportEntry.findOneAndUpdate(
             { reportId: rapport._id, timeSlot },
-            { note, workHours },
+            { note, workHours, createdBy: userId },
             { new: true, upsert: true }  // `new` pour retourner le document mis à jour, `upsert` pour créer s'il n'existe pas
         );
 

@@ -11,12 +11,17 @@ const reportEntrySchema = new mongoose.Schema({
     enum: ['morning', 'afternoon', 'night','junction'],
     required: true,
   },
-  note:{
+  note: {
     type: String,
     default: '',
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,  
+    ref: 'User',                           
+    required: true
+  }
 }, { timestamps: true });
 
 const ReportEntry = mongoose.model('ReportEntry', reportEntrySchema);
 
-module.exports = {ReportEntry};
+module.exports = { ReportEntry };

@@ -22,7 +22,7 @@ function LoginPage() {
 
   // Validation attributs avec Yup
   const validationSchema = Yup.object({
-    email: Yup.string().email('Email invalide').required('Email requis'),
+    code: Yup.string().required('code requis'),
     password: Yup.string().required('Mot de passe requis'),
   });
 
@@ -35,13 +35,12 @@ function LoginPage() {
           <h2>Connexion à votre compte</h2>
         </div>
         <Formik
-          initialValues={{ email: '', password: '' }}
+          initialValues={{ code: '', password: '' }}
           validationSchema={validationSchema}
           onSubmit={async (values) => {
-            console.log(values);
 
             let dataToSubmit = {
-              email: values.email,
+              code: values.code,
               password: values.password,
             };
 
@@ -49,7 +48,6 @@ function LoginPage() {
 
             try {
               const response = await loginUser(dataToSubmit);
-              console.log(response);
 
               const result = await response.payload;
 
@@ -61,8 +59,8 @@ function LoginPage() {
                 navigate('/');
               } else {
 
-                if (result.message === "Auth failed, email not found") {
-                  setFormErrorMessage('Adresse mail non trouvée.');
+                if (result.message === "Auth failed, code not found") {
+                  setFormErrorMessage('Code non trouvée.');
                 } else if (result.message === "Wrong password") {
                   setFormErrorMessage('Mot de passe incorrect.');
                 } else {
@@ -78,15 +76,15 @@ function LoginPage() {
         >
           <Form>
             <div className="form-group">
-              <label htmlFor="email">Adresse mail</label>
+              <label htmlFor="code">Code</label>
               <Field
-                type="email"
-                id="email"
-                name="email"
-                placeholder="alex@multitubes.com"
+                type="code"
+                id="code"
+                name="code"
+                placeholder="123456..."
                 className="input"
               />
-              <ErrorMessage name="email" component="div" className="error" />
+              <ErrorMessage name="code" component="div" className="error" />
             </div>
 
             <div className="form-group">

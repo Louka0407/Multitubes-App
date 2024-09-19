@@ -12,7 +12,7 @@ router.get("/auth", auth, (req, res) => {
         _id: req.user._id,
         isAdmin: req.user.role === 0 ? false : true,
         isAuth: true,
-        email: req.user.email,
+        code: req.user.code,
         name: req.user.name,
         lastname: req.user.lastname,
         role: req.user.role,
@@ -32,13 +32,13 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     try {
-        // Recherche de l'utilisateur par email
-        const user = await User.findOne({ email: req.body.email });
+        // Recherche de l'utilisateur par code
+        const user = await User.findOne({ code: req.body.code });
         // Si l'utilisateur n'existe pas, retour de l'erreur
         if (!user) {
             return res.json({
                 loginSuccess: false,
-                message: "Auth failed, email not found"
+                message: "Auth failed, code not found"
             });
         }
 
