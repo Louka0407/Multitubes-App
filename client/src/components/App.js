@@ -8,6 +8,7 @@ import SelectTimeSlotPage from './views/StepPage/SelectTimeSlotPage.js';
 import ManageHoursPage from './views/StepPage/ManageHoursPage.js';
 import { DateProvider } from './views/DateContext/DateContext.js';
 import CompletionPage from './views/Completion/CompletionPage.js';
+import FinishPage from './views/FinishPage/FinishPage.js';
 
 //null   Anyone Can go inside
 //true   only logged in user can go inside
@@ -19,7 +20,10 @@ function App() {
     const AuthLoginPage = withAuthenticationCheck(LoginPage, null);
     const AuthFirstStep = withAuthenticationCheck(FirstStep, true);
     const AuthSelectTimeSlotPage = withAuthenticationCheck(SelectTimeSlotPage, true);
+    const AuthCompletionPage = withAuthenticationCheck(CompletionPage, true);
     const AuthManageHoursPage = withAuthenticationCheck(ManageHoursPage, true);
+    const AuthFinishPage = withAuthenticationCheck(FinishPage, true);
+
 
     return(
         <Suspense fallback={(<div>Loading...</div>)}>
@@ -30,7 +34,8 @@ function App() {
                     <Route path='/FirstStep' element={<FirstStep/>}/>
                     <Route path='/SelectTimeSlotPage' element={<SelectTimeSlotPage/>}/>
                     <Route path="/manage-hours/:timeSlot/:firstHour" element={<ManageHoursPage />} />
-                    <Route path='/completion' element={<CompletionPage/>}/>
+                    <Route path='/completion/:timeSlot' element={<CompletionPage/>}/>
+                    <Route path='/finish' element={<FinishPage/>}/>
                 </Routes>
             </DateProvider>
         </Suspense>

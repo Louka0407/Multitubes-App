@@ -132,4 +132,33 @@ router.get('/reportentrydata', async (req, res) =>{
     }
 });
 
+router.get('/reportentrydatacomment', async (req, res) =>{
+
+    const { selectedDate, timeSlot , formattedFirstHour} = req.query;
+    try{
+        const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(selectedDate));
+
+        // Trouver le rapport pour la date donnée
+        const rapport = await Rapport.findOne({
+            date: {
+                $gte: startOfDay,
+                $lt: endOfDay
+            }
+        });
+
+        if(rapport){
+            const existingReportEntry = await ReportEntry.findOne({
+                reportId: rapport._id,
+                timeSlot,
+            });
+
+            if(existingReportEntry){
+                res.status(200).json(existingReportEntry)
+            }
+        }
+    }catch(err){
+        console.log("pas de compte rendu trouvé");
+    }
+});
+
 module.exports = router;

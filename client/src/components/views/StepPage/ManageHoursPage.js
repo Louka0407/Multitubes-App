@@ -97,7 +97,7 @@ const ManageHoursPage = () => {
       } else {
         localStorage.removeItem('duration');
 
-        navigate('/completion');
+        navigate(`/completion/${timeSlot}`);
       }
 
         toast.success('Soumission réussie !');
