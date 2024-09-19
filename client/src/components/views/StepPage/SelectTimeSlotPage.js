@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDate } from '../DateContext/DateContext';
 import styles from './SelectTimeSlotPage.module.css';
@@ -10,6 +10,14 @@ import axios from 'axios';
 const SelectTimeSlotPage = () => {
   const navigate = useNavigate();
   const { selectedDate } = useDate();
+
+
+  useEffect(() => {
+    localStorage.removeItem('duration');
+
+  }, []);
+
+
 
   const handleSelectTimeSlot = async (timeSlot) => {
     let firstHour;

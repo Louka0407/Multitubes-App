@@ -12,6 +12,7 @@ const ManageHoursPage = () => {
   const { timeSlot: rawTimeSlot, firstHour } = useParams();
   const navigate = useNavigate();
   const { selectedDate } = useDate();
+  const formattedFirstHour = String(firstHour).padStart(2, '0');
 
   const [responses, setResponses] = useState({
     'Netteté décor et texte': 'NA',
@@ -36,21 +37,30 @@ const ManageHoursPage = () => {
 
 
   useEffect(() => {
-    let calculatedDuration;
-    const day = getDayOfWeek(selectedDate);
-
-    if (day === 'Vendredi') {
-      calculatedDuration = 7;
-    } else if (timeSlot === 'junction') {
-      calculatedDuration = 7;
-    } else if (day === 'Samedi' || day === 'Dimanche') {
-      calculatedDuration = 13;
+    const storedDuration = localStorage.getItem('duration');
+    if (storedDuration) {
+      // Si duration est déjà présent dans le localStorage, on l'utilise
+      setDuration(parseInt(storedDuration, 10));
     } else {
-      calculatedDuration = 9;
+      // Sinon, on calcule et on l'enregistre
+      let calculatedDuration;
+      const day = getDayOfWeek(selectedDate);
+  
+      if (day === 'Vendredi') {
+        calculatedDuration = 7;
+      } else if (timeSlot === 'junction') {
+        calculatedDuration = 7;
+      } else if (day === 'Samedi' || day === 'Dimanche') {
+        calculatedDuration = 13;
+      } else {
+        calculatedDuration = 9;
+      }
+  
+      setDuration(calculatedDuration);
+      localStorage.setItem('duration', calculatedDuration);
     }
-
-    setDuration(calculatedDuration);
   }, [timeSlot, selectedDate]);
+  
 
 
   const handleSubmit = async (e) => {
@@ -81,8 +91,12 @@ const ManageHoursPage = () => {
       let nextHour = (firstHourB + 1) % 24;
 
       if (duration > 1) {
+        localStorage.setItem('duration', duration - 1);
+
         navigate(`/manage-hours/${timeSlot}/${nextHour}`);
       } else {
+        localStorage.removeItem('duration');
+
         navigate('/completion');
       }
 
@@ -98,53 +112,70 @@ const ManageHoursPage = () => {
   };
 
   useEffect(() => {
-    console.log("date : " + selectedDate);
+
+    const storedDuration = localStorage.getItem('duration');
+    if (storedDuration) {
+      setDuration(parseInt(storedDuration, 10));
+    }
+    
+    console.log("date : " + selectedDate + "formattedFirstHour : " + formattedFirstHour);
+  
     async function fetchData(){
-
-      const response = await axios.get(`/api/reportEntry/reportentrydata`, {
-        params: {
-          selectedDate,
-          timeSlot,
-          formattedFirstHour
+      try {
+        const response = await axios.get(`/api/reportEntry/reportentrydata`, {
+          params: {
+            selectedDate,
+            timeSlot,
+            formattedFirstHour
+          }
+        });
+        
+        const existingReportEntry = response.data;
+  
+        // Mettre à jour la note, même si elle est vide
+        if (existingReportEntry.note) {
+          setNote(existingReportEntry.note);
+        } else {
+          setNote(''); // Réinitialiser la note si elle n'existe pas
         }
-      });
-      
-      const existingReportEntry = response.data;
-
-      if(existingReportEntry.note){
-        setNote(existingReportEntry.note);
-
+  
+        // Toujours vérifier et mettre à jour les workHours, même s'il n'y a pas de note
         if (existingReportEntry.workHours && existingReportEntry.workHours.length > 0) {
           const updatedResponses = {};
           existingReportEntry.workHours.forEach(workHour => {
-            updatedResponses[workHour.title] = workHour.status || 'NA'; // On utilise 'NA' par défaut si aucun statut n'est trouvé
+            updatedResponses[workHour.title] = workHour.status || 'NA'; // 'NA' par défaut si aucun statut n'est trouvé
           });
+  
           setResponses(updatedResponses); // Mettre à jour l'état des réponses avec les données récupérées
+          console.log("responses : " + JSON.stringify(updatedResponses, null, 2));
+        } else {
+          // Réinitialiser les responses si workHours est vide
+          setResponses({
+            'Netteté décor et texte': 'NA',
+            'Orientation Cap': 'NA',
+            'Cap bien vissé / snappée': 'NA',
+            'Alu seal bien fixé': 'NA',
+            'Pas de dommages sur les tubes': 'NA',
+            'Hauteur étiquette/décor': 'NA',
+            'Spot': 'NA',
+            'Tenue tête': 'NA',
+            'Pas d\'ovalité':'NA',
+            'Aspect vernis':'NA',
+            'Tube droit':'NA',
+            'Pas de variation de teinte':'NA',
+            'Ligne de découpe':'NA',
+          });
         }
-
-      }else{
-        setResponses({
-          'Netteté décor et texte': 'NA',
-          'Orientation Cap': 'NA',
-          'Cap bien vissé / snappée': 'NA',
-          'Alu seal bien fixé': 'NA',
-          'Pas de dommages sur les tubes': 'NA',
-          'Hauteur étiquette/décor': 'NA',
-          'Spot': 'NA',
-          'Tenue tête': 'NA',
-          'Pas d\'ovalité':'NA',
-          'Aspect vernis':'NA',
-          'Tube droit':'NA',
-          'Pas de variation de teinte':'NA',
-          'Ligne de découpe':'NA',
-        });
-        setNote('');
+  
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
       }
     }
-
+  
     fetchData();
     // eslint-disable-next-line 
   }, [location.pathname]);
+  
 
   const handleResponseChange = (key, value) => {
     setResponses({
@@ -155,7 +186,6 @@ const ManageHoursPage = () => {
 
 
 
-  const formattedFirstHour = String(firstHour).padStart(2, '0');
 
   function getDayOfWeek(selectedDate) {
     const date = new Date(selectedDate);
@@ -163,9 +193,19 @@ const ManageHoursPage = () => {
     return daysOfWeek[date.getDay()];
   }
 
+  const handleBackClick = () => {
+    if (duration > 0) {
+      setDuration(prevDuration => {
+        const newDuration = prevDuration + 1;
+        localStorage.setItem('duration', newDuration);
+        return newDuration;
+      });
+    }
+  };
+
   return (
     <div className={styles.container}>
-      <Header nav="retour" />
+      <Header nav="retour" onBackClick={handleBackClick} />
       <NavBar currentStep="2" />
 
       <div className={styles.header}>

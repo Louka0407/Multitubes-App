@@ -7,10 +7,14 @@ const CompletionPage = () => {
 
     const [note, setNote] = useState(''); // État pour la note
 
+    const resetDuration = () => {
+      // Réinitialiser la durée à 1 dans le localStorage
+      localStorage.setItem('duration', '1');
+    };
 
   return (
     <div className={styles.container}>
-      <Header nav="retour" />
+      <Header nav="retour" onBackClick={resetDuration}/>
       <NavBar currentStep="3" />
 
       <div className={styles.header}>

@@ -4,7 +4,7 @@ import multitubesLogo from '../../../images/Multitubes Logo.png';
 import styles from './HeaderPage.module.css';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
-function Header(props) {
+function Header({ nav, onBackClick }) {
   const navigate = useNavigate();
 
   const smoothScrollToTop = () => {
@@ -15,15 +15,19 @@ function Header(props) {
   };
 
   const handleClick = () => {
-    if (props.nav === "retour") {
+    if (nav === "retour") {
+      if (onBackClick) {
+        onBackClick(); // Appel de la fonction de rappel
+      }
       navigate(-1);
     } else {
-      navigate(props.nav);
+      navigate(nav);
     }
     setTimeout(() => {
       smoothScrollToTop();
     }, 10);
   };
+
 
   return (
     <header className={styles.header}>
