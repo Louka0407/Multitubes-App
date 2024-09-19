@@ -5,7 +5,7 @@ function FinishPage() {
 
   useEffect(() => {
     localStorage.removeItem('userId');
-
+    
   }, []);
   return (
 

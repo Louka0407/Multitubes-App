@@ -3,8 +3,8 @@ import styles from './CompletionPage.module.css';
 import Header from '../Header/Header';
 import NavBar from '../NavBar/NavBar';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Assurez-vous que vous utilisez axios pour les requêtes HTTP
-import { useDate } from '../DateContext/DateContext'; // Si vous avez un DateContext pour selectedDate
+import axios from 'axios';
+import { useDate } from '../DateContext/DateContext';
 
 const CompletionPage = () => {
   const { timeSlot } = useParams();
@@ -15,7 +15,6 @@ const CompletionPage = () => {
   useEffect(() => {
     // Fonction pour récupérer les données du ReportEntry
     const fetchReportEntry = async () => {
-      console.log("test");
       try {
         const response = await axios.get('/api/reportEntry/reportentrydatacomment', {
           params: {
@@ -36,10 +35,23 @@ const CompletionPage = () => {
     fetchReportEntry();
   }, [selectedDate, timeSlot]);
 
-  const resetDuration = () => {
-    // Réinitialiser la durée à 1 dans le localStorage
-    localStorage.setItem('duration', '1');
-  };
+  useEffect(() => {
+    // Fonction pour réinitialiser la durée
+    const resetDuration = () => {
+      localStorage.setItem('duration', '1');
+    };
+
+    // Ajouter l'écouteur d'événement pour le retour en arrière du navigateur
+    window.addEventListener('popstate', resetDuration);
+
+    // Réinitialiser la durée au chargement de la page
+    resetDuration();
+
+    // Nettoyer l'écouteur d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('popstate', resetDuration);
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,7 +73,7 @@ const CompletionPage = () => {
 
   return (
     <div className={styles.container}>
-      <Header nav="retour" onBackClick={resetDuration} />
+      <Header nav="retour" onBackClick={() => localStorage.setItem('duration', '1')} />
       <NavBar currentStep="3" />
 
       <div className={styles.header}>

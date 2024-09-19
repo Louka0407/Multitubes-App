@@ -101,7 +101,6 @@ const ManageHoursPage = () => {
       }
 
         toast.success('Soumission réussie !');
-        console.log("duration : " + duration)
         setDuration(prevDuration => prevDuration - 1);
         window.scrollTo(0, 0);
       
@@ -147,7 +146,6 @@ const ManageHoursPage = () => {
           });
   
           setResponses(updatedResponses); // Mettre à jour l'état des réponses avec les données récupérées
-          console.log("responses : " + JSON.stringify(updatedResponses, null, 2));
         } else {
           // Réinitialiser les responses si workHours est vide
           setResponses({
@@ -184,7 +182,25 @@ const ManageHoursPage = () => {
     });
   };
 
+  useEffect(() => {
+    const handlePopState = () => {
+      if (duration > 0) {
+        setDuration(prevDuration => {
+          const newDuration = prevDuration + 1;
+          localStorage.setItem('duration', newDuration);
+          return newDuration;
+        });
+      }
+    };
 
+    // Ajouter l'écouteur d'événement pour le retour en arrière du navigateur
+    window.addEventListener('popstate', handlePopState);
+
+    // Nettoyer l'écouteur d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [duration]);
 
 
   function getDayOfWeek(selectedDate) {
@@ -205,7 +221,7 @@ const ManageHoursPage = () => {
 
   return (
     <div className={styles.container}>
-      <Header nav="retour" onBackClick={handleBackClick} />
+      <Header nav="retour"/>
       <NavBar currentStep="2" />
 
       <div className={styles.header}>
