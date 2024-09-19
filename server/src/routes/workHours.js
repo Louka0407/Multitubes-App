@@ -12,7 +12,7 @@ const getStartAndEndOfDay = (date) => {
 
 // Route pour créer ou mettre à jour les heures de travail
 router.post('/', async (req, res) => {
-  const { selectedDate, timeSlot, note, workHours, hour } = req.body;
+  const { selectedDate, timeSlot, note, workHours, hour, line } = req.body;
 
   if (!selectedDate || !timeSlot || !workHours || !Array.isArray(workHours)) {
     return res.status(400).json({ message: "Paramètres manquants ou incorrects." });
@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
   try {
     // Étape 1: Trouver le rapport correspondant à la date
     const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(selectedDate));
-    const rapport = await Rapport.findOne({ date: { $gte: startOfDay, $lt: endOfDay } });
+    const rapport = await Rapport.findOne({ date: { $gte: startOfDay, $lt: endOfDay }, line });
 
 
     // Étape 2: Trouver le reportEntry correspondant au timeSlot

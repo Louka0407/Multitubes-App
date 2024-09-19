@@ -32,8 +32,7 @@ const formatDate = (date) => {
 };
 
 const FirstStep = () => {
-  const { setSelectedDate } = useDate();
-
+  const { setSelectedDate, setLine } = useDate();
   const navigate = useNavigate();
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
@@ -43,7 +42,7 @@ const FirstStep = () => {
 
   const formik = useFormik({
     initialValues: {
-      line: 1,
+      line: 10,
       date: currentDate, 
       clients: [
         { client: '', articleNavision: '', orderNumber: '', quantity: '' }
@@ -55,8 +54,10 @@ const FirstStep = () => {
       try {
         const formattedDate = formatDate(new Date(values.date));
 
-        const response = await axios.get(`/api/report/${formattedDate}`);
-
+        const response = await axios.get(`/api/report`, {
+          params: { date: formattedDate, line: values.line }
+        });
+        
         const existingReport = response.data.rapport;
 
         const rapportData = {
@@ -95,26 +96,25 @@ const FirstStep = () => {
     },
   });
 
-  const fetchReport = useCallback(async (date) => {
+  const fetchReport = useCallback(async (line, date) => {
     setLoading(true); 
     try {
       const formattedDate = formatDate(new Date(date));
-
-      const response = await axios.get(`/api/report/${formattedDate}`);
+      const response = await axios.get(`/api/report`, {
+        params: { date: formattedDate, line: line }
+      });
 
       if (response.data.message) {
-
-        // Reset form values to initial values if no report is found
-        formik.resetForm({
-          values: {
-            line: formik.initialValues.line,
-            date: formattedDate,
-            clients: formik.initialValues.clients,
-          }
-        });
+        // Met à jour les valeurs du formulaire sans réinitialiser la ligne
+        formik.setValues(prevValues => ({
+          ...prevValues,
+          date: formattedDate,
+          clients: formik.initialValues.clients,
+        }));
       } else {
         const { rapport, clients } = response.data;
 
+        // Met à jour les valeurs du formulaire avec les données récupérées
         formik.setValues({
           line: rapport.line,
           date: formattedDate,
@@ -129,26 +129,27 @@ const FirstStep = () => {
   }, [formik]);
 
   useEffect(() => {
-    const controller = new AbortController();
+    // Se déclenche seulement lorsque currentDate ou formik.values.line changent
     const fetchData = async () => {
-      try {
-        await fetchReport(currentDate, { signal: controller.signal });
-      } catch (error) {
-        if (error.name === 'AbortError') {
-          console.log('Request aborted');
-        } else {
-          console.error(error);
-        }
-      }
+      await fetchReport(formik.values.line, currentDate);
     };
 
     fetchData();
+    // Les dépendances sont currentDate et formik.values.line pour éviter les boucles infinies
+  }, [currentDate, formik.values.line]);
 
-    return () => {
-      controller.abort();
-    };
-    // eslint-disable-next-line
-  }, [currentDate]);
+  useEffect(() => {
+    setLine(formik.initialValues.line); // Set the line in your context or state
+  }, []);
+
+  const handleLineChange = async (event) => {
+    const { value } = event.target;
+    formik.setFieldValue('line', value);
+    // Appelle fetchReport avec la nouvelle ligne et la date actuelle
+    await fetchReport(value, currentDate);
+    setLine(value);
+
+  };
 
   const addClientFields = () => {
     const newClientField = { client: '', articleNavision: '', orderNumber: '', quantity: '' };
@@ -199,12 +200,16 @@ const FirstStep = () => {
             id="line"
             name="line"
             value={formik.values.line}
-            onChange={formik.handleChange}
+            onChange={handleLineChange}
             onBlur={formik.handleBlur}
           >
-            <option value={1}>1</option>
-            <option value={2}>2</option>
-            <option value={3}>3</option>
+            <option value={10}>10</option>
+            <option value={11}>11</option>
+            <option value={12}>12</option>
+            <option value={42}>42</option>
+            <option value={45}>45</option>
+            <option value={46}>46</option>
+
           </select>
           {formik.touched.line && formik.errors.line && <div className={styles.error}>{formik.errors.line}</div>}
         </div>

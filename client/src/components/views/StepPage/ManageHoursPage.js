@@ -11,7 +11,7 @@ import axios from 'axios';
 const ManageHoursPage = () => {
   const { timeSlot: rawTimeSlot, firstHour } = useParams();
   const navigate = useNavigate();
-  const { selectedDate } = useDate();
+  const { selectedDate, line } = useDate();
   const formattedFirstHour = String(firstHour).padStart(2, '0');
 
   const [responses, setResponses] = useState({
@@ -77,7 +77,8 @@ const ManageHoursPage = () => {
         timeSlot,     // Le créneau horaire actuel
         note: document.querySelector('textarea').value, // Récupération de la note du textarea
         hour: formattedFirstHour,
-        workHours // Le tableau des heures de travail avec leurs titres et statuts
+        workHours, // Le tableau des heures de travail avec leurs titres et statuts,
+        line
       });
   
       // Vérifier si les workHours existent déjà
@@ -125,7 +126,8 @@ const ManageHoursPage = () => {
           params: {
             selectedDate,
             timeSlot,
-            formattedFirstHour
+            formattedFirstHour,
+            line
           }
         });
         

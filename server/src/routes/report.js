@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
         // Vérification qu'il n'existe pas déjà un rapport pour cette date
         const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(date));
         const existingReport = await Rapport.findOne({
-            date: { $gte: startOfDay, $lt: endOfDay }
+            date: { $gte: startOfDay, $lt: endOfDay }, line
         });
 
         if (existingReport) {
@@ -55,27 +55,24 @@ router.put('/:id', async (req, res) => {
 });
 
 // Route pour obtenir un rapport et ses clients par date
-router.get('/:date', async (req, res) => {
+router.get('/', async (req, res) => {
+    const { date, line } = req.query;
+  
     try {
-
-        const { date } = req.params;
-        const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(date));
-
-        const rapport = await Rapport.findOne({
-            date: { $gte: startOfDay, $lt: endOfDay }
-        });
-
-        if (!rapport) {
-            return res.json({ message: "Aucun rapport trouvé pour cette date" });
-        }
-
+      const rapport = await Rapport.findOne({ date, line });
+      if (rapport) {
         const clients = await Client.find({ rapportId: rapport._id });
 
         res.status(200).json({ rapport, clients });
+      }
+      if(!rapport){
+        return res.json({ message: "Rapport non trouvé" });
+      }
+      
     } catch (error) {
-        console.error('Erreur lors de la récupération du rapport:', error);
-        res.status(500).json({ error: "Erreur serveur lors de la récupération du rapport et des clients" });
+      res.status(500).json({ error: 'Erreur serveur' });
     }
-});
+  });
+  
 
 module.exports = router;

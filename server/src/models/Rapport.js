@@ -11,6 +11,7 @@ const rapportSchema = new Schema({
         required: true,
     },
 });
+rapportSchema.index({ line: 1, date: 1 }, { unique: true });
 
 const Rapport = mongoose.model('Rapport', rapportSchema);
 

@@ -13,7 +13,7 @@ const getStartAndEndOfDay = (date) => {
 
 
 router.post('/create-entry' , auth, async (req, res) => {
-    const { selectedDate, timeSlot } = req.body;
+    const { selectedDate, timeSlot, line } = req.body;
     try{
         const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(selectedDate));
     
@@ -21,7 +21,8 @@ router.post('/create-entry' , auth, async (req, res) => {
             date: {
                 $gte: startOfDay,
                 $lt: endOfDay
-            }
+            },
+            line
         });
 
 
@@ -44,7 +45,7 @@ router.post('/create-entry' , auth, async (req, res) => {
             timeSlot,
             workHours: [],
             note: '',
-            createBy: req.user._id
+            createBy: req.user._id?req.user._id:null
         });
 
         await reportEntry.save();
@@ -57,7 +58,7 @@ router.post('/create-entry' , auth, async (req, res) => {
 });
 
 router.put('/update', async (req, res) => {
-    const { selectedDate, timeSlot, note, workHours, userId } = req.body;
+    const { selectedDate, timeSlot, note, workHours, userId, line } = req.body;
 
     // if (!selectedDate || !timeSlot) {
     //     return res.status(400).json({ message: "Les paramètres 'selectedDate' et 'timeSlot' sont requis." });
@@ -71,7 +72,8 @@ router.put('/update', async (req, res) => {
             date: {
                 $gte: startOfDay,
                 $lt: endOfDay
-            }
+            },
+            line
         });
 
         if (!rapport) {
@@ -98,7 +100,7 @@ router.put('/update', async (req, res) => {
 
 router.get('/reportentrydata', async (req, res) =>{
 
-    const { selectedDate, timeSlot , formattedFirstHour} = req.query;
+    const { selectedDate, timeSlot , formattedFirstHour, line} = req.query;
     try{
         const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(selectedDate));
 
@@ -107,7 +109,8 @@ router.get('/reportentrydata', async (req, res) =>{
             date: {
                 $gte: startOfDay,
                 $lt: endOfDay
-            }
+            },
+            line
         });
 
         if(rapport){
@@ -136,7 +139,7 @@ router.get('/reportentrydata', async (req, res) =>{
 
 router.get('/reportentrydatacomment', async (req, res) =>{
 
-    const { selectedDate, timeSlot , formattedFirstHour} = req.query;
+    const { selectedDate, timeSlot , formattedFirstHour, line} = req.query;
     try{
         const { startOfDay, endOfDay } = getStartAndEndOfDay(new Date(selectedDate));
 
@@ -145,7 +148,8 @@ router.get('/reportentrydatacomment', async (req, res) =>{
             date: {
                 $gte: startOfDay,
                 $lt: endOfDay
-            }
+            },
+            line
         });
 
         if(rapport){

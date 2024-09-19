@@ -8,7 +8,7 @@ import { useDate } from '../DateContext/DateContext';
 
 const CompletionPage = () => {
   const { timeSlot } = useParams();
-  const { selectedDate } = useDate(); // Supposons que vous utilisez un DateContext pour la date
+  const { selectedDate, line } = useDate(); // Supposons que vous utilisez un DateContext pour la date
   const [note, setNote] = useState(''); // État pour la note
   const navigate = useNavigate();
 
@@ -64,6 +64,7 @@ const CompletionPage = () => {
         timeSlot,
         note, // La nouvelle note
         userId,
+        line
       });
 
       // Rediriger vers la page de fin après la soumission

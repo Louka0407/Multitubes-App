@@ -10,7 +10,7 @@ import axios from 'axios';
 const SelectTimeSlotPage = () => {
   const navigate = useNavigate();
   const { selectedDate } = useDate();
-
+  const {line} = useDate();
 
   useEffect(() => {
     localStorage.removeItem('duration');
@@ -52,6 +52,7 @@ const SelectTimeSlotPage = () => {
       await axios.post('/api/reportEntry/create-entry',{
         selectedDate,
         timeSlot,
+        line
       });
     }catch(err) {
       console.error('Erreur lors de la création du compte rendu: ', err);
