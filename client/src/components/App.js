@@ -29,13 +29,13 @@ function App() {
         <Suspense fallback={(<div>Loading...</div>)}>
             <DateProvider>
                 <Routes>
-                    <Route path='/' element={<LandingPage/>}/>
-                    <Route path="/login" element={<LoginPage/>}/>
-                    <Route path='/FirstStep' element={<FirstStep/>}/>
-                    <Route path='/SelectTimeSlotPage' element={<SelectTimeSlotPage/>}/>
-                    <Route path="/manage-hours/:timeSlot/:firstHour" element={<ManageHoursPage />} />
-                    <Route path='/completion/:timeSlot' element={<CompletionPage/>}/>
-                    <Route path='/finish' element={<FinishPage/>}/>
+                    <Route path='/' element={<AuthLandingPage/>}/>
+                    <Route path="/login" element={<AuthLoginPage/>}/>
+                    <Route path='/FirstStep' element={<AuthFirstStep/>}/>
+                    <Route path='/SelectTimeSlotPage' element={<AuthSelectTimeSlotPage/>}/>
+                    <Route path="/manage-hours/:timeSlot/:firstHour" element={<AuthManageHoursPage />} />
+                    <Route path='/completion/:timeSlot' element={<AuthCompletionPage/>}/>
+                    <Route path='/finish' element={<AuthFinishPage/>}/>
                 </Routes>
             </DateProvider>
         </Suspense>
