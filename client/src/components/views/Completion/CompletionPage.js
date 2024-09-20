@@ -4,7 +4,7 @@ import Header from '../Header/Header';
 import NavBar from '../NavBar/NavBar';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useDate } from '../DateContext/DateContext';
+import { useDate } from '../DateLineContext/DateLineContext';
 
 const CompletionPage = () => {
   const { timeSlot } = useParams();

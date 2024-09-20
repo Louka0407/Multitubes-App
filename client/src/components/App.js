@@ -6,7 +6,7 @@ import LandingPage from './views/LandingPage/LandingPage.js';
 import FirstStep from './views/FirstStepPage/FirstStepPage.js';
 import SelectTimeSlotPage from './views/StepPage/SelectTimeSlotPage.js';
 import ManageHoursPage from './views/StepPage/ManageHoursPage.js';
-import { DateProvider } from './views/DateContext/DateContext.js';
+import { DateProvider } from './views/DateLineContext/DateLineContext.js';
 import CompletionPage from './views/Completion/CompletionPage.js';
 import FinishPage from './views/FinishPage/FinishPage.js';
 

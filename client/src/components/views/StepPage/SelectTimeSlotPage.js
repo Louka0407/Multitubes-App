@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDate } from '../DateContext/DateContext';
+import { useDate } from '../DateLineContext/DateLineContext';
 import styles from './SelectTimeSlotPage.module.css';
 import Header from '../Header/Header';
 import NavBar from '../NavBar/NavBar';
