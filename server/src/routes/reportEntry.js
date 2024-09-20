@@ -4,6 +4,7 @@ const {ReportEntry} = require('../models/ReportEntry');
 const {Rapport} = require('../models/Rapport');
 const { WorkHours } = require('../models/WorkHours');
 const { auth } = require("../middleware/auth");
+const {User} = require("../models/User");
 
 const getStartAndEndOfDay = (date) => {
     const startOfDay = new Date(date.setHours(0, 0, 0, 0));
@@ -166,5 +167,39 @@ router.get('/reportentrydatacomment', async (req, res) =>{
         console.log("pas de compte rendu trouvé");
     }
 });
+
+router.get('/reportentries', async (req, res) => {
+    const { rapportId } = req.query;
+  
+    if (!rapportId) {
+      return res.status(400).json({ message: "rapportId est requis." });
+    }
+  
+    try {
+      // Récupérer les reportEntries pour ce rapport
+      const reportEntries = await ReportEntry.find({ reportId: rapportId });
+  
+      // Si aucune entrée n'est trouvée, retournez un message d'erreur
+      if (!reportEntries.length) {
+        return res.status(404).json({ message: "Aucune entrée de rapport trouvée pour ce rapport." });
+      }
+  
+      // Récupérer les workHours associés à chaque reportEntry
+      const reportEntriesWithWorkHours = await Promise.all(
+        reportEntries.map(async (entry) => {
+          const workHours = await WorkHours.find({ reportEntryId: entry._id });
+          const user = await User.findById(entry.createdBy).select('name lastname'); // Récupérer le nom et le prénom
+          return { ...entry.toObject(), workHours, createdBy: user };
+        })
+      );
+  
+      // Retourner les reportEntries avec leurs workHours
+      res.status(200).json(reportEntriesWithWorkHours);
+    } catch (err) {
+      console.error("Erreur lors de la récupération des données :", err);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  });
+  
 
 module.exports = router;

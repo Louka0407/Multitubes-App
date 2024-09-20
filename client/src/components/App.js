@@ -9,6 +9,7 @@ import ManageHoursPage from './views/StepPage/ManageHoursPage.js';
 import { DateProvider } from './views/DateLineContext/DateLineContext.js';
 import CompletionPage from './views/Completion/CompletionPage.js';
 import FinishPage from './views/FinishPage/FinishPage.js';
+import GenerateReport from './views/GenerateReport/GenerateReport.js';
 
 //null   Anyone Can go inside
 //true   only logged in user can go inside
@@ -23,6 +24,7 @@ function App() {
     const AuthCompletionPage = withAuthenticationCheck(CompletionPage, true);
     const AuthManageHoursPage = withAuthenticationCheck(ManageHoursPage, true);
     const AuthFinishPage = withAuthenticationCheck(FinishPage, true);
+    const AuthGenerateReport = withAuthenticationCheck(GenerateReport, true);
 
 
     return(
@@ -36,6 +38,7 @@ function App() {
                     <Route path="/manage-hours/:timeSlot/:firstHour" element={<AuthManageHoursPage />} />
                     <Route path='/completion/:timeSlot' element={<AuthCompletionPage/>}/>
                     <Route path='/finish' element={<AuthFinishPage/>}/>
+                    <Route path='/generatereport' element={<AuthGenerateReport/>}/>
                 </Routes>
             </DateProvider>
         </Suspense>

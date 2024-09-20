@@ -84,6 +84,25 @@ router.put('/update/:id', async (req, res) => {
   }
 });
 
+// Route pour récupérer toutes les entrées par timeslot
+router.get('/reportentries/:id?', async (req, res) => {
+  const reportEntryId = req.params.id;
+
+  try {
+    if (reportEntryId) {
+      const reportEntry = await ReportEntry.findById(reportEntryId);
+      if (!reportEntry) {
+        return res.status(404).json({ message: "Entrée non trouvée." });
+      }
+      return res.status(200).json(reportEntry);
+    }
+  } catch (err) {
+    console.error('Erreur lors de la récupération des entrées:', err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+});
+
+
 
 
 module.exports = router;

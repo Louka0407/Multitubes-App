@@ -15,6 +15,10 @@ function LandingPage() {
     navigate('/FirstStep');
   };
 
+  const handleClick2 = () => {
+    navigate('/generatereport');
+  }
+
 
   return (
     <div className={styles.container}>
@@ -27,7 +31,7 @@ function LandingPage() {
           <img src={creerRapportImg} alt="Créer un rapport" className={styles.optionImage} />
           <p>Créer un rapport</p>
         </div>
-        <div className={styles.optionCard}>
+        <div className={styles.optionCard} onClick={handleClick2}>
           <img src={genererRapportImg} alt="Générer un rapport" className={styles.optionImage} />
           <p>Générer un rapport</p>
         </div>

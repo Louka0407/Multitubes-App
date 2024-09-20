@@ -136,10 +136,12 @@ const FirstStep = () => {
 
     fetchData();
     // Les dépendances sont currentDate et formik.values.line pour éviter les boucles infinies
+    // eslint-disable-next-line
   }, [currentDate, formik.values.line]);
 
   useEffect(() => {
     setLine(formik.initialValues.line); // Set the line in your context or state
+    // eslint-disable-next-line
   }, []);
 
   const handleLineChange = async (event) => {
