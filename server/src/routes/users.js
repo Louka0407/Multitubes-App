@@ -87,4 +87,61 @@ router.get("/logout", auth, async (req, res) => {
     }
 });
 
+router.get("/", auth, async (req, res) => {
+    try {
+      const users = await User.find();
+  
+      res.status(200).json(users);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des utilisateurs :', error);
+      res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs' });
+    }
+  });
+
+  router.post("/deleteUser", auth, async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        await User.findByIdAndDelete(userId);
+
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "An error occurred while deleting the user" });
+    }
+});
+
+// Route pour la modification des utilisateurs
+router.post("/updateUser", auth, async (req, res) => {
+    try {
+        console.log("Update request received for user:", req.body);
+
+        const { userId, code, name, role, lastname } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Vérifier si le code est déjà utilisé par un autre utilisateur
+        const existingUser = await User.findOne({ code });
+        if (existingUser && existingUser._id.toString() !== userId) {
+            return res.status(400).json({ success: false, message: "Code already in use" });
+        }
+
+        await User.findByIdAndUpdate(userId, { code, name, role, lastname });
+
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "An error occurred while updating the user" });
+    }
+});
+
+
 module.exports = router;
