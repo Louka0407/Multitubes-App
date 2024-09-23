@@ -19,6 +19,13 @@
   .formRow {
     margin-bottom: 20px;
   }
+
+  .error {
+    color: red;
+    font-size: 0.875rem; /* Par exemple, ajustable selon tes besoins */
+    margin-top: 0.5rem;
+  }
+  
   
   .label {
     font-size: 1.2rem;

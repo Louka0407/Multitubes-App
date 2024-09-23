@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFormik } from 'formik';
+import { useFormik,ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import jsPDF from 'jspdf';
@@ -47,6 +47,10 @@ function GenerateReport() {
         });
 
         const dataRapport = response.data;
+        console.log(dataRapport);
+        if(dataRapport.message === "Rapport non trouvé"){
+          setError("Pas de rapport existant.")
+        }
 
         // Récupérer les reportEntries associés
         const rapportId = dataRapport.rapport._id;
@@ -277,7 +281,6 @@ function GenerateReport() {
         <button type="submit" className={styles.submitButton} disabled={loading}>
           {loading ? 'Chargement...' : 'Générer le Rapport'}
         </button>
-
         {error && <div className={styles.error}>{error}</div>}
       </form>
     </div>
