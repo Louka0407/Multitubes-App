@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Header from '../Header/Header';
+import styles from './AdminPage.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -13,6 +15,7 @@ function UserList() {
   const [visible, setVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -117,8 +120,12 @@ function UserList() {
     }
   };
 
+  const handleClick = () => {
+    navigate('/adminAddUser');
+  }
+
   return (
-    <div>
+    <div className={styles.container2}>
       {isAdmin && (
         <>
         <Header nav="retour"/>
@@ -202,6 +209,11 @@ function UserList() {
           </Modal>
         </>
       )}
+        <div className={styles.addButtonContainer}>
+          <button type="button" className={styles.addButton} onClick={handleClick}>
+            +
+          </button>
+        </div>
     </div>
   );
 }

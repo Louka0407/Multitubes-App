@@ -11,7 +11,7 @@ import CompletionPage from './views/Completion/CompletionPage.js';
 import FinishPage from './views/FinishPage/FinishPage.js';
 import GenerateReport from './views/GenerateReport/GenerateReport.js';
 import AdminPage from './views/AdminPage/AdminPage.js';
-
+import AdminPageAddUser from './views/AdminPage/AdminPageAddUser.js';
 //null   Anyone Can go inside
 //true   only logged in user can go inside
 //false  logged in user can't go inside
@@ -27,6 +27,7 @@ function App() {
     const AuthFinishPage = withAuthenticationCheck(FinishPage, true);
     const AuthGenerateReport = withAuthenticationCheck(GenerateReport, true);
     const AuthAdminPage = withAuthenticationCheck(AdminPage, true);
+    const AuthAdminPageAddUser = withAuthenticationCheck(AdminPageAddUser, true);
 
 
     return(
@@ -42,6 +43,7 @@ function App() {
                     <Route path='/finish' element={<AuthFinishPage/>}/>
                     <Route path='/generatereport' element={<AuthGenerateReport/>}/>
                     <Route path='/admin' element={<AuthAdminPage/>}/>
+                    <Route path='/adminAddUser' element={<AuthAdminPageAddUser/>}/>
 
                 </Routes>
             </DateProvider>

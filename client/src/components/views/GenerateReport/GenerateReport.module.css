@@ -3,6 +3,11 @@
     max-width: 800px;
     margin: 0 auto;
   }
+
+  .container2{
+    margin: 0 auto;
+    padding: 30px;
+  }
   
   .formContainer {
     background-color: #f9f9f9;

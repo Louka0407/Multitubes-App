@@ -173,6 +173,8 @@ function GenerateReport() {
         yPosition = doc.autoTable.previous.finalY + 10;
         yPosition += 10; 
 
+        doc.setFont('helvetica', 'normal');
+
     const commentText = `Commentaire général : ${entry.note || 'Aucun commentaire disponible'}`;
     const creatorName = entry.createdBy ? `${entry.createdBy.name} ${entry.createdBy.lastname}` : 'Inconnu';
 
@@ -222,11 +224,11 @@ function GenerateReport() {
   };
 
   return (
+    <div className={styles.container2}>
+    <Header nav="/" />
+
     <div className={styles.container}>
-      <Header nav="/" />
-
       <h1>Générer un Rapport</h1>
-
       <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
         <div className={styles.formRow}>
           <label htmlFor="date">Date :</label>
@@ -278,6 +280,7 @@ function GenerateReport() {
 
         {error && <div className={styles.error}>{error}</div>}
       </form>
+    </div>
     </div>
   );
 }
