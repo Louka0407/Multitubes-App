@@ -96,13 +96,25 @@ function GenerateReport() {
     // Position y après le titre et l'image
     let yPosition = 40; 
 
+    const lineText = `Numéro de ligne : ${formik.values.line}`;
+    const quaText = "QUA-F-27";
 
-    doc.text(`Numéro de ligne : ${formik.values.line}`, 10, yPosition);
+    // Calculer la largeur des deux textes
+    const lineTextWidth = doc.getTextWidth(lineText);
+    const quaTextWidth = doc.getTextWidth(quaText);
+
+    // Position de départ pour "QUA-F-27" (aligné à droite avec une marge de 10)
+    const quaX = pageWidth - quaTextWidth - 10;
+
+    // Ajouter "Numéro de ligne : ..." à gauche
+    doc.text(lineText, 10, yPosition);
+
+    // Ajouter "QUA-F-27" à la fin de la ligne, aligné à droite
+    doc.text(quaText, quaX, yPosition);
 
     yPosition += 10;
     const NumCommande = dataRapport.clients.map(client => client.orderNumber);
     const numCommandeString = NumCommande.join('-');
-
     // Exemple de table avec les données JSON récupérées
     doc.autoTable({
       head: [['Client', 'Article Navision', 'Numéro de Commande', 'Quantité']],
@@ -113,7 +125,7 @@ function GenerateReport() {
       headStyles: {
         fillColor: [246, 166, 35], // Couleur orange (#f6a623)
         textColor: 255,            // Couleur du texte (blanc)
-        fontStyle: 'bold',         // Texte en gras
+        fontStyle: 'bold',         
       }
     });
 
@@ -179,22 +191,33 @@ function GenerateReport() {
 
         doc.setFont('helvetica', 'normal');
 
-    const commentText = `Commentaire général : ${entry.note || 'Aucun commentaire disponible'}`;
-    const creatorName = entry.createdBy ? `${entry.createdBy.name} ${entry.createdBy.lastname}` : 'Inconnu';
-
-    const boxX = 10;
-    const boxY = yPosition;
-    const padding = 5; 
-    const textWidth = doc.getTextWidth(commentText) + 20; 
-    const boxHeight = 20; 
-
-    doc.setFillColor(240, 240, 240); // Gris clair
-    doc.roundedRect(boxX, boxY, textWidth, boxHeight, 3, 3, 'F'); 
-
-    doc.setFontSize(12); 
-    doc.setTextColor(50);
-    doc.text(commentText, boxX + padding, boxY + padding + 5); 
-
+        const commentText = `Commentaire général : ${entry.note || 'Aucun commentaire disponible'}`;
+        const creatorName = entry.createdBy ? `${entry.createdBy.name} ${entry.createdBy.lastname}` : 'Inconnu';
+        
+        const boxX = 10;
+        const boxY = yPosition;
+        const padding = 5;
+        const maxLineWidth = 180; // Largeur maximale du texte avant retour à la ligne
+        
+        // Diviser le texte en lignes si nécessaire
+        const splitText = doc.splitTextToSize(commentText, maxLineWidth);
+        
+        // Calculer la hauteur de la boîte en fonction du nombre de lignes
+        const lineHeight = 7; // Hauteur approximative d'une ligne de texte
+        const boxHeight = splitText.length * lineHeight + 2 * padding; // Ajuster la hauteur en fonction des lignes et du padding
+        
+        // Calculer la largeur de la boîte en fonction de la largeur maximale des lignes
+        const textWidth = maxLineWidth + 2 * padding;
+        
+        // Dessiner la bulle grise (rect arrondi)
+        doc.setFillColor(240, 240, 240); // Gris clair
+        doc.roundedRect(boxX, boxY, textWidth, boxHeight, 3, 3, 'F');
+        
+        // Ajouter le texte à l'intérieur de la bulle
+        doc.setFontSize(12);
+        doc.setTextColor(50);
+        doc.text(splitText, boxX + padding, boxY + padding + 5);
+        
     yPosition += boxHeight + 10;
 
     doc.setFontSize(10);
