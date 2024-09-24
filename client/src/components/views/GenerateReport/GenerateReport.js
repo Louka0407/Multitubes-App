@@ -97,7 +97,7 @@ function GenerateReport() {
     let yPosition = 40; 
 
 
-    doc.text(`Numéros de ligne : ${formik.values.line}`, 10, yPosition);
+    doc.text(`Numéro de ligne : ${formik.values.line}`, 10, yPosition);
 
     yPosition += 10;
     const NumCommande = dataRapport.clients.map(client => client.orderNumber);
