@@ -13,6 +13,7 @@
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "date-fns": "^2.29.3",
+    "formik": "^2.4.6",
     "http-proxy-middleware": "^3.0.2",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.2",
@@ -31,10 +32,11 @@
     "redux-promise": "^0.6.0",
     "redux-thunk": "^3.1.0",
     "use-debounce": "^10.0.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.4.0"
   },
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -61,6 +63,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-transform-private-property-in-object": "^7.24.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "http-proxy-middleware": "^1.0.3",

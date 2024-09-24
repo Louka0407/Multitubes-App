@@ -20,18 +20,4 @@ services:
       - /app/node_modules
     env_file:
       - variables.env
-    depends_on:
-      - mongo
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongo-data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-
-volumes:
-  mongo-data:

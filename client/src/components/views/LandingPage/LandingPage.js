@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-import creerRapportImg from '../../../images/Créer un rapport.png';
-import genererRapportImg from '../../../images/Générer un rapport.png';
+import creerRapportImg from '../../../images/creerrapport.png';
+import genererRapportImg from '../../../images/genererrapport.png';
 import multitubesLogo from '../../../images/Multitubes Logo.png';
 import adminPageImg from '../../../images/Admin Page.png';
 import axios from 'axios';
